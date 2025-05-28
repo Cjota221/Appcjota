@@ -32,7 +32,6 @@ function loadCustosVariaveis() {
     custosVariaveis.forEach(custo => {
         totalPorUnidade += parseFloat(custo.valor);
         const row = document.createElement('tr');
-        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
             <td data-label="Nome do Custo">${custo.nome}</td>
             <td data-label="Valor por Unidade (R$)">${parseFloat(custo.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
@@ -117,7 +116,6 @@ function clearCustoVariavelForm() {
     document.getElementById('custoVariavelId').value = '';
 }
 
-// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
