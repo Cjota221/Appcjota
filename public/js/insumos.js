@@ -6,10 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('insumoForm').addEventListener('submit', handleInsumoSubmit);
         document.getElementById('insumoModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('insumoModal');
+                closeModal('insumoModal', clearInsumoForm); // Passa a função de limpar como callback
             }
         });
-        document.getElementById('openAddInsumoModal').addEventListener('click', () => openModal('insumoModal'));
+        document.getElementById('openAddInsumoModal').addEventListener('click', () => {
+            clearInsumoForm(); // Garante que o formulário está limpo antes de abrir
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Insumo';
+            openModal('insumoModal');
+        });
     }
 });
 
@@ -19,7 +23,7 @@ function loadInsumos() {
     insumosList.innerHTML = ''; // Limpa a lista existente
 
     if (insumos.length === 0) {
-        insumosList.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum insumo cadastrado.</td></tr>';
+        insumosList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum insumo cadastrado.</td></tr>'; // Alterado colspan de 5 para 4
         return;
     }
 
@@ -44,6 +48,8 @@ function loadInsumos() {
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', (e) => deleteInsumo(e.target.dataset.id));
     });
+
+    document.getElementById('totalInsumosCount').textContent = insumos.length; // Atualiza o total de insumos
 }
 
 function handleInsumoSubmit(event) {
@@ -75,8 +81,7 @@ function handleInsumoSubmit(event) {
 
     if (success) {
         alert(`Insumo ${insumoId ? 'atualizado' : 'cadastrado'} com sucesso!`);
-        closeModal('insumoModal');
-        clearInsumoForm();
+        closeModal('insumoModal', clearInsumoForm);
         loadInsumos();
     } else {
         alert('Falha ao salvar o insumo.');
@@ -109,14 +114,26 @@ function deleteInsumo(id) {
 function clearInsumoForm() {
     document.getElementById('insumoForm').reset();
     document.getElementById('insumoId').value = '';
-    document.getElementById('modalTitle').textContent = 'Adicionar Novo Insumo';
+    // O título do modal será atualizado ao abrir o modal
 }
 
+// Funções globais de modal (ou mova para app.js se for usar em várias páginas)
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex'; // Exibe o modal para iniciar a transição
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10); // Pequeno atraso para permitir que o display:flex seja aplicado antes da transição
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    clearInsumoForm(); // Limpa o formulário ao fechar o modal
+function closeModal(modalId, callback = null) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', function handler() {
+        modal.style.display = 'none'; // Esconde o modal após a transição
+        if (callback) {
+            callback(); // Executa a função de limpeza (clearForm)
+        }
+        modal.removeEventListener('transitionend', handler);
+    }, { once: true }); // Remove o listener após a primeira execução
 }
