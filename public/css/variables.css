@@ -1,21 +1,31 @@
 :root {
-    /* Cores */
+    /* Cores principais para o degradê de fundo */
+    --gradient-start-color: #3f005b; /* Um roxo/azul escuro profundo */
+    --gradient-end-color: #000033;   /* Um azul marinho bem escuro */
+
+    /* Cores de destaque (mantendo a essência, ajustando tons) */
     --primary-color: #dc2eda; /* Pink Vibrante */
     --secondary-color: #f2ea21; /* Amarelo Vibrante */
-    --background-dark: #121212; /* Um pouco mais escuro para o fundo principal */
-    --surface-dark: #1E1E1E; /* Cor para cards e modais, mais suave que o fundo */
-    --text-light: #E0E0E0; /* Texto principal mais claro */
-    --text-muted: #A0A0A0; /* Texto secundário/cinza, com bom contraste */
-    --border-color: rgba(255, 255, 255, 0.1); /* Bordas muito sutis */
-    --success-color: #4CAF50; /* Verde mais vibrante e moderno */
-    --danger-color: #F44336; /* Vermelho mais vibrante e moderno */
-    --info-color: #2196F3; /* Azul mais vibrante e moderno */
+
+    /* Cores da interface (cards, texto, etc.) */
+    --surface-dark: #2A2A4A; /* Fundo dos cards - um tom de azul escuro que contrasta com o degradê */
+    --surface-light: #3A3A6A; /* Fundo de elementos interativos ou hover de card */
+    --text-light: #E0E0E0;   /* Texto principal claro */
+    --text-muted: #A0A0B0;   /* Texto secundário/sutil */
+    --border-color: rgba(255, 255, 255, 0.08); /* Bordas muito sutis, quase invisíveis */
+
+    /* Cores de status */
+    --success-color: #4CAF50;
+    --danger-color: #F44336;
+    --info-color: #2196F3;
 
     /* Fontes */
-    --font-family-primary: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Adicionando Inter como fallback */
+    --font-family-primary: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-size-base: 1rem;
     --font-size-small: 0.875rem;
     --font-size-large: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 2rem;
 
     /* Espaçamento */
     --spacing-xs: 4px;
@@ -27,11 +37,16 @@
 
     /* Borda arredondada */
     --border-radius-sm: 4px;
-    --border-radius-md: 8px; /* Ligeiramente maior para um visual mais suave */
+    --border-radius-md: 8px;
     --border-radius-lg: 12px;
+    --border-radius-xl: 16px; /* Para cards e elementos maiores */
 
-    /* Sombras */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    /* Sombras (sutis e modernas) */
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 10px 20px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
+
+    /* Transições */
+    --transition-speed: 0.3s;
+    --transition-timing: ease-in-out;
 }
