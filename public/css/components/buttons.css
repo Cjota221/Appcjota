@@ -1,40 +1,40 @@
 .btn {
     padding: var(--spacing-sm) var(--spacing-lg);
     border: none;
-    border-radius: var(--border-radius-md); /* Mais arredondado */
+    border-radius: var(--border-radius-md);
     cursor: pointer;
     font-size: var(--font-size-base);
     font-weight: 600;
     text-align: center;
     transition: all var(--transition-speed) var(--transition-timing);
-    box-shadow: var(--shadow-light); /* Sombra sutil */
-    text-transform: capitalize; /* Capitalize a primeira letra, como na imagem de referência */
+    box-shadow: var(--shadow-light);
+    text-transform: capitalize;
 }
 
 .btn:active {
-    transform: translateY(1px); /* Efeito de click */
-    box-shadow: none; /* Remove sombra ao clicar */
+    transform: translateY(1px);
+    box-shadow: none;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--background-dark); /* Texto escuro no botão vibrante */
+    color: var(--background-dark);
 }
 
 .btn-primary:hover {
-    background-color: var(--secondary-color); /* Amarelo no hover para contraste */
+    background-color: var(--secondary-color);
     color: var(--background-dark);
     box-shadow: var(--shadow-medium);
 }
 
 .btn-secondary {
-    background-color: var(--surface-light); /* Cor mais clara para o secundário */
+    background-color: var(--surface-light);
     color: var(--text-light);
 }
 
 .btn-secondary:hover {
     background-color: var(--text-muted);
-    color: var(--surface-dark); /* Texto escuro no hover */
+    color: var(--surface-dark);
 }
 
 .btn-danger {
@@ -57,7 +57,7 @@
     box-shadow: var(--shadow-medium);
 }
 
-.btn-info { /* Adicionando estilo para botões de informação/editar */
+.btn-info {
     background-color: var(--info-color);
     color: white;
 }
@@ -71,7 +71,7 @@
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: var(--font-size-large); /* Um pouco maior */
+    font-size: var(--font-size-large);
     cursor: pointer;
     padding: var(--spacing-xs);
     border-radius: var(--border-radius-sm);
@@ -84,9 +84,9 @@
 }
 
 /* Botões de tabela menores */
-.data-table .actions .btn { /* Removendo o .btn-sm se não for mais necessário */
+.data-table .actions .btn {
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: var(--font-size-small);
     border-radius: var(--border-radius-sm);
-    box-shadow: none; /* Remover sombra para botões pequenos */
+    box-shadow: none;
 }
