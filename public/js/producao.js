@@ -15,10 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('producaoModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('producaoModal');
+                closeModal('producaoModal', clearProducaoForm);
             }
         });
-        document.getElementById('openAddProducaoModal').addEventListener('click', () => openModal('producaoModal'));
+        document.getElementById('openAddProducaoModal').addEventListener('click', () => {
+            clearProducaoForm();
+            document.getElementById('modalTitle').textContent = 'Registrar Nova Produção';
+            openModal('producaoModal');
+        });
     }
 });
 
@@ -34,7 +38,7 @@ function loadProducoes() {
 
     producoes.forEach(producao => {
         const summary = Calculadora.calculateProductionSummary(producao.id);
-        const totalPares = producao.modelosProduzidos.reduce((acc, item) => acc + item.quantidade, 0);
+        const totalPares = producao.modelosProduzidos.reduce((acc, item) => acc + parseFloat(item.quantidade), 0); // Correção para parseFloat
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -124,23 +128,6 @@ function updateProducaoSummary() {
         });
     });
 
-    // Crie um objeto de produção temporário para usar na calculadora
-    const tempProducao = {
-        id: 'temp',
-        modelosProduzidos: modelosProduzidos,
-        data: new Date().toISOString().split('T')[0], // A data não é crucial para o resumo
-        nomeProducao: 'Resumo Temporário'
-    };
-
-    // Salva a produção temporariamente para que a Calculadora possa acessá-la
-    // (Similar ao hack para Modelos, será melhor refatorar a Calculadora para aceitar objetos diretos)
-    // Para o MVP, vamos salvá-lo e imediatamente buscar.
-
-    // A maneira correta seria:
-    // const summary = Calculadora.calculateProductionSummaryFromObject(tempProducao);
-    // Para fins de demonstração, vamos simular que funciona com o Storage.
-
-    // Simulação do cálculo (se a Calculadora.calculateProductionSummary aceitasse um objeto direto)
     let totalCustoProducao = 0;
     let totalLucroProducao = 0;
     let totalParesProduzidos = 0;
@@ -148,7 +135,7 @@ function updateProducaoSummary() {
     modelosProduzidos.forEach(prodItem => {
         const modelo = Storage.getById('modelos', prodItem.modeloId);
         if (modelo) {
-            const modeloCalculo = Calculadora.calculateModelCostFromObject(modelo);
+            const modeloCalculo = Calculadora.calculateModelCostFromObject(modelo); // Usa a função adaptada
             if (modeloCalculo) {
                 const precoVendaSugerido = Calculadora.suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
                 totalCustoProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
@@ -202,8 +189,7 @@ function handleProducaoSubmit(event) {
 
     if (success) {
         alert(`Produção ${producaoId ? 'atualizada' : 'registrada'} com sucesso!`);
-        closeModal('producaoModal');
-        clearProducaoForm();
+        closeModal('producaoModal', clearProducaoForm);
         loadProducoes();
     } else {
         alert('Falha ao salvar a produção.');
@@ -261,14 +247,26 @@ function clearProducaoForm() {
     document.getElementById('lucroTotalProducao').textContent = 'R$ 0,00';
     document.getElementById('totalParesProduzidos').textContent = '0 Pares';
     document.getElementById('precoMinimoVenda').textContent = 'R$ 0,00';
-    document.getElementById('modalTitle').textContent = 'Registrar Nova Produção';
+    // O título do modal será atualizado ao abrir o modal
 }
 
+// Reuso das funções de modal
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10);
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    clearProducaoForm();
+function closeModal(modalId, callback = null) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', function handler() {
+        modal.style.display = 'none';
+        if (callback) {
+            callback();
+        }
+        modal.removeEventListener('transitionend', handler);
+    }, { once: true });
 }
