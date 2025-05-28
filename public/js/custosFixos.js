@@ -6,10 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('custoFixoForm').addEventListener('submit', handleCustoFixoSubmit);
         document.getElementById('custoFixoModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('custoFixoModal');
+                closeModal('custoFixoModal', clearCustoFixoForm);
             }
         });
-        document.getElementById('openAddCustoFixoModal').addEventListener('click', () => openModal('custoFixoModal'));
+        document.getElementById('openAddCustoFixoModal').addEventListener('click', () => {
+            clearCustoFixoForm();
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Fixo';
+            openModal('custoFixoModal');
+        });
     }
 });
 
@@ -19,7 +23,7 @@ function loadCustosFixos() {
     custosFixosList.innerHTML = '';
 
     if (custosFixos.length === 0) {
-        custosFixosList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum custo fixo cadastrado.</td></tr>';
+        custosFixosList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo fixo cadastrado.</td></tr>'; // Alterado colspan para 3
         return;
     }
 
@@ -77,8 +81,7 @@ function handleCustoFixoSubmit(event) {
 
     if (success) {
         alert(`Custo Fixo ${custoFixoId ? 'atualizado' : 'cadastrado'} com sucesso!`);
-        closeModal('custoFixoModal');
-        clearCustoFixoForm();
+        closeModal('custoFixoModal', clearCustoFixoForm);
         loadCustosFixos();
     } else {
         alert('Falha ao salvar o custo fixo.');
@@ -110,14 +113,30 @@ function deleteCustoFixo(id) {
 function clearCustoFixoForm() {
     document.getElementById('custoFixoForm').reset();
     document.getElementById('custoFixoId').value = '';
-    document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Fixo';
+    // O título do modal será atualizado ao abrir o modal
 }
 
+// Reuso das funções de modal (definidas em js/app.js ou aqui, conforme sua organização)
+// As funções openModal e closeModal já foram definidas acima em insumos.js,
+// é importante não redefinir em cada arquivo se elas são globais.
+// Para este exemplo, estou as mantendo em cada arquivo para fácil cópia e colagem,
+// mas em um projeto real, elas estariam em app.js ou um arquivo de utilitários global.
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10);
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    clearCustoFixoForm();
+function closeModal(modalId, callback = null) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', function handler() {
+        modal.style.display = 'none';
+        if (callback) {
+            callback();
+        }
+        modal.removeEventListener('transitionend', handler);
+    }, { once: true });
 }
