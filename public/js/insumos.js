@@ -29,7 +29,6 @@ function loadInsumos() {
 
     insumos.forEach(insumo => {
         const row = document.createElement('tr');
-        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
             <td data-label="Nome">${insumo.nome}</td>
             <td data-label="Unidade de Medida">${insumo.unidadeMedida}</td>
@@ -117,7 +116,6 @@ function clearInsumoForm() {
     document.getElementById('insumoId').value = '';
 }
 
-// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
