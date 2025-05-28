@@ -1,39 +1,43 @@
 .form-group {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg); /* Mais espaçamento entre grupos de formulário */
 }
 
 .form-group label {
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm); /* Mais espaço entre label e input */
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: var(--font-size-small);
 }
 
 .form-actions {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
     justify-content: flex-end;
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-xxl); /* Mais espaço acima dos botões de ação */
 }
 
 /* Upload de imagem */
 .image-upload-preview {
-    width: 180px; /* Um pouco maior */
-    height: 180px;
+    width: 200px; /* Mais visível */
+    height: 200px;
     border: 2px dashed var(--border-color);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-lg); /* Mais arredondado */
     display: flex;
-    flex-direction: column; /* Para alinhar ícone e texto */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     margin-bottom: var(--spacing-md);
-    background-color: #222; /* Fundo levemente diferente para contraste */
-    cursor: pointer; /* Indica que é clicável */
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-    position: relative; /* Para posicionamento do ícone */
+    background-color: var(--surface-light); /* Mais claro para indicar interatividade */
+    cursor: pointer;
+    transition: border-color var(--transition-speed) var(--transition-timing),
+                background-color var(--transition-speed) var(--transition-timing);
+    position: relative;
 }
 
 .image-upload-preview:hover {
     border-color: var(--primary-color);
-    background-color: #282828;
+    background-color: rgba(var(--primary-color), 0.1); /* Brilho no hover */
 }
 
 .image-upload-preview img {
@@ -43,21 +47,19 @@
 }
 
 .image-upload-preview span {
-    color: var(--text-muted); /* Texto mais sutil */
-    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-size: var(--font-size-small);
     text-align: center;
     padding: var(--spacing-sm);
     position: absolute;
-    z-index: 1; /* Para ficar acima do ícone quando a imagem está vazia */
+    z-index: 1;
 }
 
-/* Adicionar ícone de câmera */
+/* Ícone de câmera */
 .image-upload-preview::before {
-    content: '📷'; /* Ícone de câmera */
-    font-size: 3rem;
+    content: '📸'; /* Emoji de câmera é mais amigável */
+    font-size: 3.5rem; /* Um pouco maior */
     color: var(--text-muted);
-    margin-bottom: var(--spacing-sm);
-    display: block;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -65,7 +67,6 @@
     z-index: 0;
 }
 
-/* Esconder o ícone e o texto quando a imagem estiver presente */
 .image-upload-preview img + span,
 .image-upload-preview img + .image-upload-preview::before {
     display: none;
