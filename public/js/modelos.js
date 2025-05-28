@@ -284,7 +284,6 @@ function clearModeloForm() {
     document.getElementById('margemLucroDisplay').textContent = '0%';
 }
 
-// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
