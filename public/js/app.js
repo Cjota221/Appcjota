@@ -84,7 +84,6 @@ function renderProducaoChart() {
             datasets: [{
                 label: 'Pares Produzidos',
                 data: data,
-                // Usando getComputedStyle para ler as variáveis CSS diretamente
                 backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
                 borderColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                 borderWidth: 1
