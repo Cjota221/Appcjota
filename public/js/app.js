@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Carregar dados do dashboard (exemplo para index.html)
-    if (document.body.id === 'dashboard-page') { // Adicione um ID ao body do index.html
+    if (document.body.id === 'dashboard-page') {
         loadDashboardSummary();
         renderProducaoChart();
     }
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadDashboardSummary() {
     const modelos = Storage.load('modelos');
     const producoes = Storage.load('producoes');
-    const insumos = Storage.load('insumos');
+    // const insumos = Storage.load('insumos'); // Não usado diretamente aqui, mas pode ser útil para outros resumos
 
     document.getElementById('totalModelos').textContent = modelos.length;
 
@@ -48,7 +48,7 @@ function loadDashboardSummary() {
     producoes.forEach(prod => {
         const summary = Calculadora.calculateProductionSummary(prod.id);
         if (summary) {
-            prod.modelosProduzidos.forEach(item => totalParesProduzidos += item.quantidade);
+            prod.modelosProduzidos.forEach(item => totalParesProduzidos += parseFloat(item.quantidade));
             totalLucroEstimado += summary.lucroTotalProducao;
         }
     });
@@ -61,13 +61,12 @@ function renderProducaoChart() {
     const labels = [];
     const data = [];
 
-    // Agrupar produção por modelo para o gráfico (simplificado para exemplo)
     const producaoPorModelo = {};
     producoes.forEach(prod => {
         prod.modelosProduzidos.forEach(item => {
             const modelo = Storage.getById('modelos', item.modeloId);
             if (modelo) {
-                producaoPorModelo[modelo.nome] = (producaoPorModelo[modelo.nome] || 0) + item.quantidade;
+                producaoPorModelo[modelo.nome] = (producaoPorModelo[modelo.nome] || 0) + parseFloat(item.quantidade);
             }
         });
     });
@@ -85,6 +84,7 @@ function renderProducaoChart() {
             datasets: [{
                 label: 'Pares Produzidos',
                 data: data,
+                // Usando getComputedStyle para ler as variáveis CSS diretamente
                 backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
                 borderColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                 borderWidth: 1
