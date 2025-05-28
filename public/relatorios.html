@@ -1,74 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatórios - AppCJ</title>
+    <title>AppCJ - Relatórios</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        .list-group-item { border-radius: var(--border-radius); margin-bottom: var(--spacing-xs); }
-        .list-group-item .badge { font-size: 0.9em; }
-        .table-sm td, .table-sm th { padding: var(--spacing-sm); }
-    </style>
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
 </head>
-<body>
-    <aside class="app-sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
-                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
-                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
-                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
-                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
-                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
-                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
-                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
-                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
-
-    <header class="app-header">
-         <div class="logo-header-container">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <div class="header-title">
-            <h1>Relatórios Gerenciais</h1>
-        </div>
-        <div></div>
-    </header>
-
-    <main class="main-content">
-        <div class="container">
-            <section id="relatorios-section">
-                <div class="card mb-3">
-                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-dollar-sign"></i> Custo de Insumos por Modelo</h3></div>
-                    <div class="card-body" id="relatorioCustoPorModelo">
-                        </div>
-                </div>
-
-                <div class="card mb-3">
-                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-industry"></i> Resumo de Custos por Produção</h3></div>
-                    <div class="card-body" id="relatorioCustoProducao">
-                        </div>
-                </div>
-
+<body id="relatorios-page">
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
+                <h3>AppCJ</h3>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-item">Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item">Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item">Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item active">Relatórios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>Relatórios e Backup</h1>
+                <div class="user-info"></div>
+            </header>
+            <section class="content-area">
                 <div class="card">
-                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-boxes"></i> Consumo Agregado de Insumos</h3></div>
-                    <div class="card-body" id="relatorioConsumoInsumos">
+                    <h2>Relatórios Gráficos</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+                        <div class="card chart-card">
+                            <h3>Custo por Modelo</h3>
+                            <canvas id="custoPorModeloChart"></canvas>
                         </div>
+                        <div class="card chart-card">
+                            <h3>Consumo Total de Insumos</h3>
+                            <canvas id="consumoInsumosChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: var(--spacing-lg);">
+                    <h2>Backup e Restauração de Dados</h2>
+                    <div class="form-group">
+                        <p>Faça backup de todos os seus dados em um arquivo JSON para segurança.</p>
+                        <button class="btn btn-primary" id="exportDataBtn">Exportar Dados (JSON)</button>
+                    </div>
+                    <div class="form-group" style="margin-top: var(--spacing-lg);">
+                        <p>Restaure seus dados de um arquivo JSON de backup.</p>
+                        <input type="file" id="importDataInput" accept=".json">
+                        <p style="font-size: 0.85rem; color: #aaa;">
+                            * Ao importar, os dados atuais serão substituídos pelos dados do arquivo JSON.
+                            A página será recarregada após a importação.
+                        </p>
+                    </div>
                 </div>
             </section>
-            <div id="notification-area"></div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script src="js/storage.js"></script>
-    <script src="
+    <script src="js/calculadora.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/relatorios.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
