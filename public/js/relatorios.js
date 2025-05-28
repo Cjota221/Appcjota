@@ -1,7 +1,7 @@
 // js/relatorios.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#relatorios-page')) { // Adicione um ID ao body do relatorios.html
+    if (document.querySelector('#relatorios-page')) {
         renderCustoPorModeloChart();
         renderConsumoInsumosChart();
         document.getElementById('exportDataBtn').addEventListener('click', Storage.exportData);
@@ -15,7 +15,7 @@ function renderCustoPorModeloChart() {
     const data = [];
 
     modelos.forEach(modelo => {
-        const calculo = Calculadora.calculateModelCostFromObject(modelo); // Usar a função que aceita o objeto
+        const calculo = Calculadora.calculateModelCostFromObject(modelo);
         if (calculo) {
             labels.push(modelo.nome);
             data.push(calculo.custoTotalUnitario);
@@ -30,8 +30,9 @@ function renderCustoPorModeloChart() {
             datasets: [{
                 label: 'Custo Total Unitário (R$)',
                 data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                // Usando getComputedStyle para ler as variáveis CSS diretamente
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                 borderWidth: 1
             }]
         },
@@ -102,17 +103,18 @@ function renderConsumoInsumosChart() {
             datasets: [{
                 label: 'Consumo Total de Insumos',
                 data: data,
+                // Usando getComputedStyle para ler as variáveis CSS diretamente
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
+                    getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                    getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
+                    'rgba(255, 206, 86, 0.6)', // Amarelo
+                    'rgba(75, 192, 192, 0.6)', // Verde-água
+                    'rgba(153, 102, 255, 0.6)', // Roxo
+                    'rgba(255, 159, 64, 0.6)'  // Laranja
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
+                    getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                    getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)',
@@ -146,3 +148,4 @@ function handleImportData(event) {
         reader.readAsText(file);
     }
 }
+```
