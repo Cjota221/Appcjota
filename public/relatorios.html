@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - AppCJ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .list-group-item { border-radius: var(--border-radius); margin-bottom: var(--spacing-xs); }
+        .list-group-item .badge { font-size: 0.9em; }
+        .table-sm td, .table-sm th { padding: var(--spacing-sm); }
+    </style>
+</head>
+<body>
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text">AppCJ</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
+                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
+                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
+                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
+                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
+                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
+                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
+                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
+                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
+            </ul>
+        </nav>
+    </aside>
 
+    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+
+    <header class="app-header">
+         <div class="logo-header-container">
+            <span class="logo-text">AppCJ</span>
+        </div>
+        <div class="header-title">
+            <h1>Relatórios Gerenciais</h1>
+        </div>
+        <div></div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section id="relatorios-section">
+                <div class="card mb-3">
+                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-dollar-sign"></i> Custo de Insumos por Modelo</h3></div>
+                    <div class="card-body" id="relatorioCustoPorModelo">
+                        </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-industry"></i> Resumo de Custos por Produção</h3></div>
+                    <div class="card-body" id="relatorioCustoProducao">
+                        </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header primary"><h3 class="text-white"><i class="fas fa-boxes"></i> Consumo Agregado de Insumos</h3></div>
+                    <div class="card-body" id="relatorioConsumoInsumos">
+                        </div>
+                </div>
+            </section>
+            <div id="notification-area"></div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="
