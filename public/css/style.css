@@ -4,6 +4,7 @@
 }
 
 body {
+    /* ... (mantido do layout.css para contexto, mas o body deve ser definido em um lugar único) */
     margin: 0;
     font-family: var(--font-family-primary);
     background-color: var(--background-dark);
@@ -15,18 +16,27 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-light);
     margin-top: 0;
     margin-bottom: var(--spacing-md);
+    font-weight: 700; /* Mais peso para títulos */
 }
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.4rem; }
+h4 { font-size: 1.2rem; }
 
 p {
     margin-bottom: var(--spacing-sm);
+    color: var(--text-light); /* Garantir cor */
 }
 
 a {
     color: var(--primary-color);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 a:hover {
+    color: var(--secondary-color); /* Efeito de hover diferente */
     text-decoration: underline;
 }
 
@@ -39,13 +49,13 @@ input[type="date"],
 select,
 textarea {
     width: 100%;
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md); /* Mais padding */
     margin-bottom: var(--spacing-md);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    background-color: var(--card-background);
+    border-radius: var(--border-radius-md); /* Mais arredondado */
+    background-color: var(--surface-dark); /* Cor de fundo do card/modal */
     color: var(--text-light);
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -58,14 +68,15 @@ select:focus,
 textarea:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(220, 46, 218, 0.2); /* Sombra mais suave */
+    box-shadow: 0 0 0 3px rgba(220, 46, 218, 0.3); /* Sombra de foco mais visível */
 }
 
 label {
     display: block;
     margin-bottom: var(--spacing-xs);
-    font-weight: bold;
+    font-weight: 600; /* Mais peso */
     color: var(--text-light);
+    font-size: var(--font-size-small); /* Um pouco menor para labels */
 }
 
 /* Utilitários */
@@ -84,7 +95,7 @@ label {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--background-dark);
+    background: var(--surface-dark); /* Cor da trilha do scrollbar */
 }
 
 ::-webkit-scrollbar-thumb {
