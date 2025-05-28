@@ -65,7 +65,7 @@ const Storage = (function() {
                 allData[key] = JSON.parse(localStorage.getItem(key));
             } catch (e) {
                 console.warn(`Não foi possível parsear item para a chave ${key}`, e);
-                allData[key] = localStorage.getItem(key); // Salva como string bruta se não for JSON
+                allData[key] = localStorage.getItem(key);
             }
         }
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData, null, 2));
