@@ -32,7 +32,6 @@ function loadEstoqueSummary() {
         const saldoSimulado = 1000 - (consumoTotalInsumos[insumo.id] || 0);
 
         const row = document.createElement('tr');
-        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
             <td data-label="Insumo">${insumo.nome}</td>
             <td data-label="Unidade">${insumo.unidadeMedida}</td>
