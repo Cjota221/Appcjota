@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AppCJ - Relatórios</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components/cards.css">
     <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/charts.css">
 </head>
 <body id="relatorios-page">
     <div class="app-container">
@@ -61,7 +65,7 @@
                     <div class="form-group" style="margin-top: var(--spacing-lg);">
                         <p>Restaure seus dados de um arquivo JSON de backup.</p>
                         <input type="file" id="importDataInput" accept=".json">
-                        <p style="font-size: 0.85rem; color: #aaa;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">
                             * Ao importar, os dados atuais serão substituídos pelos dados do arquivo JSON.
                             A página será recarregada após a importação.
                         </p>
