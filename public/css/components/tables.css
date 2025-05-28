@@ -1,60 +1,82 @@
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate; /* Permite border-spacing */
+    border-spacing: 0 8px; /* Espaçamento entre linhas */
     margin-top: var(--spacing-md);
+    overflow-x: auto; /* Para rolagem horizontal em mobile */
+    display: block; /* Essencial para overflow-x */
+    white-space: nowrap; /* Evita quebra de linha dentro das células */
 }
+
+.data-table thead, .data-table tbody {
+    display: table; /* Reverter para display de tabela */
+    width: 100%;
+    table-layout: fixed; /* Colunas de largura igual */
+}
+
 
 .data-table th,
 .data-table td {
-    padding: var(--spacing-sm);
-    border: 1px solid var(--border-color);
+    padding: var(--spacing-md) var(--spacing-lg); /* Mais padding */
+    border: none; /* Remover bordas padrão */
     text-align: left;
+    background-color: var(--surface-dark); /* Cor de fundo */
+    color: var(--text-light);
 }
 
 .data-table th {
     background-color: var(--primary-color);
-    color: var(--background-dark);
-    font-weight: bold;
+    color: var(--background-dark); /* Texto escuro no fundo primário */
+    font-weight: 700;
     text-transform: uppercase;
+    font-size: var(--font-size-small);
+    position: sticky; /* Sticky header para rolagem */
+    top: 0;
+    z-index: 1;
 }
 
-.data-table tbody tr:nth-child(even) {
-    background-color: #333; /* Linhas pares com um fundo ligeiramente diferente */
+.data-table tbody tr {
+    background-color: var(--surface-dark);
+    border-radius: var(--border-radius-md); /* Arredondar cada linha */
+    box-shadow: var(--shadow-sm); /* Sombra para cada linha */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .data-table tbody tr:hover {
-    background-color: #444; /* Efeito hover nas linhas */
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #222; /* Um tom ligeiramente diferente para linhas pares */
 }
 
 .data-table .actions {
     display: flex;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     justify-content: center;
 }
 
-.data-table .actions button {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background-color 0.2s ease;
+/* Aplicar border-radius nas primeiras e últimas células do header/footer */
+.data-table thead tr th:first-child {
+    border-top-left-radius: var(--border-radius-md);
+    border-bottom-left-radius: var(--border-radius-md);
+}
+.data-table thead tr th:last-child {
+    border-top-right-radius: var(--border-radius-md);
+    border-bottom-right-radius: var(--border-radius-md);
 }
 
-.data-table .actions .edit-btn {
-    background-color: var(--info-color);
-    color: white;
-}
+.data-table tbody tr td:first-child { border-top-left-radius: var(--border-radius-md); border-bottom-left-radius: var(--border-radius-md); }
+.data-table tbody tr td:last-child { border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
 
-.data-table .actions .edit-btn:hover {
-    background-color: #117a8b;
-}
-
-.data-table .actions .delete-btn {
-    background-color: var(--danger-color);
-    color: white;
-}
-
-.data-table .actions .delete-btn:hover {
-    background-color: #bd2130;
+/* Ajuste para o rodapé da tabela */
+.data-table tfoot td {
+    padding-top: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    font-weight: 700;
+    color: var(--primary-color);
+    border-top: 1px solid var(--border-color); /* Separador para o rodapé */
+    background-color: var(--surface-dark); /* Mesma cor dos cards */
+    border-radius: var(--border-radius-md);
 }
