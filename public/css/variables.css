@@ -1,1 +1,41 @@
+:root {
+  --primary-color: #dc2eda;
+  --secondary-color: #f2ea21;
+  --white-color: #ffffff;
+  --black-color: #333333;
+  --gray-light-color: #f4f4f4;
+  --gray-medium-color: #dddddd;
+  --gray-dark-color: #777777;
+  --text-color: var(--black-color);
+  --body-bg-color: var(--white-color);
+  --sidebar-bg-color: #2c3e50; /* Cor escura para sidebar */
+  --sidebar-text-color: var(--white-color);
+  --sidebar-link-hover-bg: var(--primary-color);
+  --sidebar-link-active-bg: var(--primary-color);
+  --header-bg-color: var(--white-color);
+  --card-bg-color: var(--white-color);
+  --border-color: var(--gray-medium-color);
+  --danger-color: #e74c3c;
+  --success-color: #2ecc71;
 
+  --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem;    /* 16px */
+  --font-size-lg: 1.25rem; /* 20px */
+  --font-size-xl: 1.5rem;  /* 24px */
+  --font-size-xxl: 2rem;   /* 32px */
+
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem;  /* 8px */
+  --spacing-md: 1rem;    /* 16px */
+  --spacing-lg: 1.5rem;  /* 24px */
+  --spacing-xl: 2rem;    /* 32px */
+
+  --border-radius: 5px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+
+  --sidebar-width: 260px;
+  --header-height: 70px;
+}
