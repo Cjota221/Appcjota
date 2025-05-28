@@ -1,7 +1,7 @@
 // js/financeiro.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#financeiro-page')) { // Adicione um ID ao body do financeiro.html
+    if (document.querySelector('#financeiro-page')) {
         loadFinanceiroSummary();
     }
 });
