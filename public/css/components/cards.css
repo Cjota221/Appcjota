@@ -1,1 +1,81 @@
+.card {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-lg);
+  overflow: hidden;
+}
 
+.card-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--gray-light-color);
+  border-bottom: 1px solid var(--border-color);
+}
+.card-header h2, .card-header h3, .card-header h4 {
+  margin: 0;
+  color: var(--text-color);
+}
+.card-header.primary {
+    background-color: var(--primary-color);
+}
+.card-header.primary h2, .card-header.primary h3, .card-header.primary h4 {
+    color: var(--white-color);
+}
+
+
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+.card-footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--gray-light-color);
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+}
+
+/* Summary Cards / Stat Cards */
+.summary-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.summary-card {
+    background-color: var(--white-color);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border-left: 5px solid var(--primary-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.summary-card.secondary-accent {
+    border-left-color: var(--secondary-color);
+}
+
+.summary-card h4 {
+    font-size: var(--font-size-md);
+    color: var(--gray-dark-color);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.summary-card .value {
+    font-size: var(--font-size-xxl);
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.2;
+}
+
+.summary-card .description {
+    font-size: var(--font-size-sm);
+    color: var(--gray-dark-color);
+}
