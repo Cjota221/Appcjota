@@ -1,16 +1,16 @@
 // js/insumos.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#insumos-page')) { // Adicione um ID ao body do insumos.html
+    if (document.querySelector('#insumos-page')) {
         loadInsumos();
         document.getElementById('insumoForm').addEventListener('submit', handleInsumoSubmit);
         document.getElementById('insumoModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('insumoModal', clearInsumoForm); // Passa a função de limpar como callback
+                closeModal('insumoModal', clearInsumoForm);
             }
         });
         document.getElementById('openAddInsumoModal').addEventListener('click', () => {
-            clearInsumoForm(); // Garante que o formulário está limpo antes de abrir
+            clearInsumoForm();
             document.getElementById('modalTitle').textContent = 'Adicionar Novo Insumo';
             openModal('insumoModal');
         });
@@ -20,20 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadInsumos() {
     const insumos = Storage.load('insumos');
     const insumosList = document.getElementById('insumosList');
-    insumosList.innerHTML = ''; // Limpa a lista existente
+    insumosList.innerHTML = '';
 
     if (insumos.length === 0) {
-        insumosList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum insumo cadastrado.</td></tr>'; // Alterado colspan de 5 para 4
+        insumosList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum insumo cadastrado.</td></tr>';
         return;
     }
 
     insumos.forEach(insumo => {
         const row = document.createElement('tr');
+        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
-            <td>${insumo.nome}</td>
-            <td>${insumo.unidadeMedida}</td>
-            <td>${parseFloat(insumo.custoUnidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td class="actions">
+            <td data-label="Nome">${insumo.nome}</td>
+            <td data-label="Unidade de Medida">${insumo.unidadeMedida}</td>
+            <td data-label="Custo por Unidade">${parseFloat(insumo.custoUnidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td data-label="Ações" class="actions">
                 <button class="btn btn-info edit-btn" data-id="${insumo.id}">Editar</button>
                 <button class="btn btn-danger delete-btn" data-id="${insumo.id}">Excluir</button>
             </td>
@@ -49,7 +50,7 @@ function loadInsumos() {
         button.addEventListener('click', (e) => deleteInsumo(e.target.dataset.id));
     });
 
-    document.getElementById('totalInsumosCount').textContent = insumos.length; // Atualiza o total de insumos
+    document.getElementById('totalInsumosCount').textContent = insumos.length;
 }
 
 function handleInsumoSubmit(event) {
@@ -114,26 +115,25 @@ function deleteInsumo(id) {
 function clearInsumoForm() {
     document.getElementById('insumoForm').reset();
     document.getElementById('insumoId').value = '';
-    // O título do modal será atualizado ao abrir o modal
 }
 
-// Funções globais de modal (ou mova para app.js se for usar em várias páginas)
+// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = 'flex'; // Exibe o modal para iniciar a transição
+    modal.style.display = 'flex';
     setTimeout(() => {
         modal.classList.add('open');
-    }, 10); // Pequeno atraso para permitir que o display:flex seja aplicado antes da transição
+    }, 10);
 }
 
 function closeModal(modalId, callback = null) {
     const modal = document.getElementById(modalId);
     modal.classList.remove('open');
     modal.addEventListener('transitionend', function handler() {
-        modal.style.display = 'none'; // Esconde o modal após a transição
+        modal.style.display = 'none';
         if (callback) {
-            callback(); // Executa a função de limpeza (clearForm)
+            callback();
         }
         modal.removeEventListener('transitionend', handler);
-    }, { once: true }); // Remove o listener após a primeira execução
+    }, { once: true });
 }
