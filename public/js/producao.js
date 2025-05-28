@@ -41,7 +41,6 @@ function loadProducoes() {
         const totalPares = producao.modelosProduzidos.reduce((acc, item) => acc + parseFloat(item.quantidade), 0);
 
         const row = document.createElement('tr');
-        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
             <td data-label="Data">${new Date(producao.data).toLocaleDateString('pt-BR')}</td>
             <td data-label="Nome da Produção">${producao.nomeProducao}</td>
@@ -248,7 +247,6 @@ function clearProducaoForm() {
     document.getElementById('precoMinimoVenda').textContent = 'R$ 0,00';
 }
 
-// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
