@@ -1,12 +1,18 @@
 .btn {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-lg); /* Mais padding horizontal */
     border: none;
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--border-radius-md); /* Mais arredondado */
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: var(--font-size-base);
+    font-weight: 600; /* Mais peso */
     text-align: center;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 0.3s ease; /* Transição para todas as propriedades */
+    box-shadow: var(--shadow-sm); /* Sombra sutil */
+}
+
+.btn:active {
+    transform: translateY(1px); /* Efeito de click */
+    box-shadow: none;
 }
 
 .btn-primary {
@@ -15,16 +21,17 @@
 }
 
 .btn-primary:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--secondary-color); /* Amarelo no hover para contraste */
+    color: var(--background-dark);
 }
 
 .btn-secondary {
-    background-color: #6c757d;
-    color: var(--text-light);
+    background-color: var(--text-muted); /* Cinza mais claro */
+    color: var(--background-dark);
 }
 
 .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #888;
 }
 
 .btn-danger {
@@ -33,7 +40,7 @@
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: #D32F2F;
 }
 
 .btn-success {
@@ -42,18 +49,28 @@
 }
 
 .btn-success:hover {
-    background-color: #218838;
+    background-color: #388E3C;
 }
 
 .btn-icon {
     background: none;
     border: none;
-    color: var(--text-light);
-    font-size: 1.2rem;
+    color: var(--text-muted); /* Mais sutil */
+    font-size: 1.4rem; /* Um pouco maior */
     cursor: pointer;
     padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
 }
 
 .btn-icon:hover {
     color: var(--primary-color);
+    background-color: rgba(220, 46, 218, 0.1);
+}
+
+/* Botões de tabela menores */
+.data-table .actions button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+    border-radius: var(--border-radius-sm);
+    box-shadow: none; /* Remover sombra para botões pequenos */
 }
