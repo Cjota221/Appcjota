@@ -1,37 +1,40 @@
 .btn {
-    padding: var(--spacing-sm) var(--spacing-lg); /* Mais padding horizontal */
+    padding: var(--spacing-sm) var(--spacing-lg);
     border: none;
     border-radius: var(--border-radius-md); /* Mais arredondado */
     cursor: pointer;
     font-size: var(--font-size-base);
-    font-weight: 600; /* Mais peso */
+    font-weight: 600;
     text-align: center;
-    transition: all 0.3s ease; /* Transição para todas as propriedades */
-    box-shadow: var(--shadow-sm); /* Sombra sutil */
+    transition: all var(--transition-speed) var(--transition-timing);
+    box-shadow: var(--shadow-light); /* Sombra sutil */
+    text-transform: capitalize; /* Capitalize a primeira letra, como na imagem de referência */
 }
 
 .btn:active {
     transform: translateY(1px); /* Efeito de click */
-    box-shadow: none;
+    box-shadow: none; /* Remove sombra ao clicar */
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: var(--background-dark);
+    color: var(--background-dark); /* Texto escuro no botão vibrante */
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color); /* Amarelo no hover para contraste */
     color: var(--background-dark);
+    box-shadow: var(--shadow-medium);
 }
 
 .btn-secondary {
-    background-color: var(--text-muted); /* Cinza mais claro */
-    color: var(--background-dark);
+    background-color: var(--surface-light); /* Cor mais clara para o secundário */
+    color: var(--text-light);
 }
 
 .btn-secondary:hover {
-    background-color: #888;
+    background-color: var(--text-muted);
+    color: var(--surface-dark); /* Texto escuro no hover */
 }
 
 .btn-danger {
@@ -41,6 +44,7 @@
 
 .btn-danger:hover {
     background-color: #D32F2F;
+    box-shadow: var(--shadow-medium);
 }
 
 .btn-success {
@@ -50,16 +54,28 @@
 
 .btn-success:hover {
     background-color: #388E3C;
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-info { /* Adicionando estilo para botões de informação/editar */
+    background-color: var(--info-color);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #1976D2;
+    box-shadow: var(--shadow-medium);
 }
 
 .btn-icon {
     background: none;
     border: none;
-    color: var(--text-muted); /* Mais sutil */
-    font-size: 1.4rem; /* Um pouco maior */
+    color: var(--text-muted);
+    font-size: var(--font-size-large); /* Um pouco maior */
     cursor: pointer;
     padding: var(--spacing-xs);
     border-radius: var(--border-radius-sm);
+    transition: all var(--transition-speed) var(--transition-timing);
 }
 
 .btn-icon:hover {
@@ -68,9 +84,9 @@
 }
 
 /* Botões de tabela menores */
-.data-table .actions button {
+.data-table .actions .btn { /* Removendo o .btn-sm se não for mais necessário */
     padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: 0.75rem;
+    font-size: var(--font-size-small);
     border-radius: var(--border-radius-sm);
     box-shadow: none; /* Remover sombra para botões pequenos */
 }
