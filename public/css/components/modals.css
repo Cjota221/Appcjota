@@ -1,35 +1,49 @@
 .modal {
-    display: none; /* Escondido por padrão */
+    display: flex;
     position: fixed;
-    z-index: 1001; /* Acima de tudo */
+    z-index: 1001;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo um pouco menos opaco */
     justify-content: center;
     align-items: center;
+    opacity: 0; /* Começa invisível */
+    pointer-events: none; /* Não captura cliques */
+    transition: opacity 0.3s ease-out;
+}
+
+.modal.open { /* Classe adicionada via JS quando o modal está aberto */
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .modal-content {
-    background-color: var(--card-background);
+    background-color: var(--surface-dark); /* Nova cor */
     margin: auto;
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-md);
+    padding: var(--spacing-xl); /* Mais padding */
+    border-radius: var(--border-radius-lg); /* Mais arredondado */
     width: 90%;
-    max-width: 600px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    max-width: 700px; /* Um pouco mais largo para modais de formulário */
+    box-shadow: var(--shadow-lg); /* Sombra mais destacada */
     position: relative;
-    animation: fadeIn 0.3s ease-out;
+    transform: translateY(-20px); /* Começa um pouco acima */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    border: 1px solid var(--border-color); /* Borda sutil */
+}
+
+.modal.open .modal-content {
+    transform: translateY(0); /* Desliza para a posição */
+    opacity: 1;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     padding-bottom: var(--spacing-sm);
 }
@@ -37,15 +51,18 @@
 .modal-header h2 {
     margin: 0;
     color: var(--primary-color);
+    font-size: var(--font-size-large);
+    font-weight: 700;
 }
 
 .close-button {
-    color: var(--text-light);
-    font-size: 1.8rem;
+    color: var(--text-muted); /* Cor mais sutil */
+    font-size: 2rem; /* Um pouco maior */
     font-weight: bold;
     cursor: pointer;
     background: none;
     border: none;
+    transition: color 0.2s ease;
 }
 
 .close-button:hover,
@@ -64,9 +81,4 @@
     gap: var(--spacing-sm);
     padding-top: var(--spacing-md);
     border-top: 1px solid var(--border-color);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
 }
