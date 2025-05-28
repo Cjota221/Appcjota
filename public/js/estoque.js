@@ -1,7 +1,7 @@
 // js/estoque.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#estoque-page')) { // Adicione um ID ao body do estoque.html
+    if (document.querySelector('#estoque-page')) {
         loadEstoqueSummary();
     }
 });
@@ -12,7 +12,7 @@ function loadEstoqueSummary() {
     const estoqueList = document.getElementById('estoqueList');
     estoqueList.innerHTML = '';
 
-    const consumoTotalInsumos = {}; // { insumoId: totalConsumido }
+    const consumoTotalInsumos = {};
 
     producoes.forEach(producao => {
         const summary = Calculadora.calculateProductionSummary(producao.id);
@@ -29,19 +29,15 @@ function loadEstoqueSummary() {
     }
 
     insumos.forEach(insumo => {
-        // Para um controle de estoque real, precisaríamos de "entradas" de insumos.
-        // Aqui, vamos simular um "estoque inicial" alto ou simplesmente mostrar o consumo.
-        // Para uma funcionalidade MVP, vamos mostrar o saldo como um valor arbitrário menos o consumo.
-        // O ideal seria ter uma tela de "Compras de Insumos" para registrar entradas.
-        // Por enquanto, saldo fictício - consumo.
-        const saldoSimulado = 1000 - (consumoTotalInsumos[insumo.id] || 0); // Exemplo arbitrário de saldo inicial
+        const saldoSimulado = 1000 - (consumoTotalInsumos[insumo.id] || 0);
 
         const row = document.createElement('tr');
+        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
-            <td>${insumo.nome}</td>
-            <td>${insumo.unidadeMedida}</td>
-            <td>${(consumoTotalInsumos[insumo.id] || 0).toFixed(2)}</td>
-            <td>${saldoSimulado.toFixed(2)}</td>
+            <td data-label="Insumo">${insumo.nome}</td>
+            <td data-label="Unidade">${insumo.unidadeMedida}</td>
+            <td data-label="Consumido (Produção)">${(consumoTotalInsumos[insumo.id] || 0).toFixed(2)}</td>
+            <td data-label="Saldo Estimado">${saldoSimulado.toFixed(2)}</td>
         `;
         estoqueList.appendChild(row);
     });
