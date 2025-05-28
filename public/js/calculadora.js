@@ -1,113 +1,100 @@
-const Calculadora = {
-    // Calcula o custo total de insumos para um modelo específico
-    calcularCustoInsumosModelo: (modelo, todosInsumos) => {
-        if (!modelo || !modelo.insumos || !Array.isArray(todosInsumos)) return 0;
-        
-        return modelo.insumos.reduce((total, itemInsumo) => {
-            const insumoDetalhe = todosInsumos.find(i => i.id === itemInsumo.insumoId);
-            if (insumoDetalhe) {
-                const custoInsumo = App.parseFloatStrict(insumoDetalhe.custo);
-                const quantidade = App.parseFloatStrict(itemInsumo.quantidade);
-                return total + (custoInsumo * quantidade);
-            }
-            return total;
-        }, 0);
-    },
+// js/calculadora.js
 
-    // Calcula o custo fixo rateado por unidade produzida
-    calcularCustoFixoRateadoPorUnidade: (todosCustosFixos, volumeProducaoEstimado) => {
-        if (!Array.isArray(todosCustosFixos) || volumeProducaoEstimado <= 0) return 0;
-
-        const totalCustosFixosMensais = todosCustosFixos.reduce((total, custo) => {
-            return total + App.parseFloatStrict(custo.valor);
-        }, 0);
-        
-        return totalCustosFixosMensais / volumeProducaoEstimado;
-    },
-
-    // Calcula o total de custos variáveis por unidade
-    calcularTotalCustosVariaveisPorUnidade: (todosCustosVariaveis) => {
-        if (!Array.isArray(todosCustosVariaveis)) return 0;
-
-        return todosCustosVariaveis.reduce((total, custo) => {
-            return total + App.parseFloatStrict(custo.valorPorUnidade);
-        }, 0);
-    },
-
-    // Calcula o custo de produção unitário de um modelo
-    calcularCustoProducaoUnitarioModelo: (modelo, todosInsumos, todosCustosFixos, todosCustosVariaveis, volumeProducaoEstimado) => {
-        const custoInsumos = Calculadora.calcularCustoInsumosModelo(modelo, todosInsumos);
-        const custoFixoRateado = Calculadora.calcularCustoFixoRateadoPorUnidade(todosCustosFixos, volumeProducaoEstimado);
-        const custoVariavelTotal = Calculadora.calcularTotalCustosVariaveisPorUnidade(todosCustosVariaveis);
-        
-        return custoInsumos + custoFixoRateado + custoVariavelTotal;
-    },
-
-    // Calcula o preço de venda sugerido e o lucro
-    calcularPrecoVendaELucro: (custoProducaoUnitario, margemLucroDesejada) => {
-        if (custoProducaoUnitario < 0 || margemLucroDesejada < 0 || margemLucroDesejada >= 1) {
-             // Margem de lucro deve ser < 1 (ex: 0.5 para 50%)
-            console.error("Valores inválidos para cálculo de preço/lucro.");
-            return { precoSugerido: 0, lucroPorUnidade: 0 };
-        }
-        // Markup: Preço = Custo / (1 - Margem)
-        const precoSugerido = custoProducaoUnitario / (1 - margemLucroDesejada);
-        const lucroPorUnidade = precoSugerido - custoProducaoUnitario;
-
-        return {
-            precoSugerido: precoSugerido,
-            lucroPorUnidade: lucroPorUnidade
-        };
-    },
-
-    // Consome insumos do estoque
-    consumirInsumosEstoque: (modeloId, quantidadeProduzida, todosModelos, todosInsumos) => {
-        const modelo = todosModelos.find(m => m.id === modeloId);
-        if (!modelo) return false;
-
-        let estoque = Storage.getItems('estoque') || {};
-        let insumosConsumidosNoEstoque = []; // Para rastrear o que foi efetivamente consumido
-
-        for (const itemInsumo of modelo.insumos) {
-            const insumoId = itemInsumo.insumoId;
-            const quantidadeNecessariaUnitaria = App.parseFloatStrict(itemInsumo.quantidade);
-            const quantidadeTotalNecessaria = quantidadeNecessariaUnitaria * quantidadeProduzida;
-
-            if (estoque[insumoId] === undefined) estoque[insumoId] = 0; // Inicializa se não existir
-
-            if (estoque[insumoId] < quantidadeTotalNecessaria) {
-                const insumoDetalhe = todosInsumos.find(i => i.id === insumoId);
-                const nomeInsumo = insumoDetalhe ? insumoDetalhe.nome : `ID ${insumoId}`;
-                App.showNotification(`Estoque insuficiente para o insumo: ${nomeInsumo}. Necessário: ${quantidadeTotalNecessaria.toFixed(2)}, Disponível: ${estoque[insumoId].toFixed(2)}`, 'error');
-                // Idealmente, reverteria qualquer consumo parcial aqui ou não faria nenhum.
-                // Por simplicidade, vamos parar e não consumir nada se um item faltar.
-                return false; // Falha no consumo
-            }
-            insumosConsumidosNoEstoque.push({ insumoId, quantidade: quantidadeTotalNecessaria });
+const Calculadora = (function() {
+    function calculateModelCost(modelId) {
+        const modelo = Storage.getById('modelos', modelId);
+        if (!modelo) {
+            console.error('Modelo não encontrado para cálculo:', modelId);
+            return null;
         }
 
-        // Se todos os insumos estão disponíveis, efetua o débito
-        insumosConsumidosNoEstoque.forEach(consumo => {
-            estoque[consumo.insumoId] -= consumo.quantidade;
+        const insumos = Storage.load('insumos');
+        const custosFixos = Storage.load('custosFixos');
+        const custosVariaveis = Storage.load('custosVariaveis');
+        const producoes = Storage.load('producoes'); // Para calcular a quantidade produzida
+
+        let custoInsumos = 0;
+        modelo.insumosComposicao.forEach(comp => {
+            const insumo = insumos.find(i => i.id === comp.insumoId);
+            if (insumo) {
+                custoInsumos += parseFloat(insumo.custoUnidade) * parseFloat(comp.quantidade);
+            }
         });
 
-        Storage.saveItems('estoque', estoque);
-        return true; // Sucesso no consumo
-    },
+        // Calcular custos fixos rateados
+        const totalProducaoMensal = producoes.reduce((acc, prod) => acc + parseFloat(prod.quantidade), 0);
+        let custoFixoRateadoPorUnidade = 0;
+        if (totalProducaoMensal > 0) {
+            const totalCustosFixos = custosFixos.reduce((acc, custo) => acc + parseFloat(custo.valorMensal), 0);
+            custoFixoRateadoPorUnidade = totalCustosFixos / totalProducaoMensal;
+        }
 
-    // Adiciona insumos ao estoque
-    adicionarInsumosEstoque: (insumoId, quantidade) => {
-        let estoque = Storage.getItems('estoque') || {};
-        const qtd = App.parseFloatStrict(quantidade);
-        if (isNaN(qtd) || qtd < 0) {
-            App.showNotification("Quantidade inválida para adicionar ao estoque.", "error");
-            return false;
-        }
-        if (estoque[insumoId] === undefined) {
-            estoque[insumoId] = 0;
-        }
-        estoque[insumoId] += qtd;
-        Storage.saveItems('estoque', estoque);
-        return true;
+        // Calcular custos variáveis por unidade
+        const totalCustosVariaveisPorUnidade = custosVariaveis.reduce((acc, custo) => acc + parseFloat(custo.valor), 0);
+
+        const custoTotalUnitario = custoInsumos + custoFixoRateadoPorUnidade + totalCustosVariaveisPorUnidade;
+
+        return {
+            custoInsumos: custoInsumos,
+            custoFixoRateado: custoFixoRateadoPorUnidade,
+            custoVariavel: totalCustosVariaveisPorUnidade,
+            custoTotalUnitario: custoTotalUnitario
+        };
     }
-};
+
+    function suggestSellingPrice(custoTotalUnitario, margemLucroPercentual) {
+        if (margemLucroPercentual < 0) {
+            return { precoVendaSugerido: 0, lucroEstimado: 0 };
+        }
+        const margemDecimal = margemLucroPercentual / 100;
+        const precoVendaSugerido = custoTotalUnitario / (1 - margemDecimal);
+        const lucroEstimado = precoVendaSugerido - custoTotalUnitario;
+
+        return {
+            precoVendaSugerido: precoVendaSugerido,
+            lucroEstimado: lucroEstimado
+        };
+    }
+
+    function calculateProductionSummary(producaoId) {
+        const producao = Storage.getById('producoes', producaoId);
+        if (!producao) {
+            return null;
+        }
+
+        let custoTotalProducao = 0;
+        let lucroTotalProducao = 0;
+        let insumosConsumidos = {}; // { insumoId: quantidadeConsumida }
+
+        producao.modelosProduzidos.forEach(prodItem => {
+            const modeloCalculo = calculateModelCost(prodItem.modeloId);
+            if (modeloCalculo) {
+                const precoVendaSugerido = suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
+                custoTotalProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
+                lucroTotalProducao += precoVendaSugerido.lucroEstimado * prodItem.quantidade;
+
+                // Acumular consumo de insumos
+                const modelo = Storage.getById('modelos', prodItem.modeloId);
+                if (modelo) {
+                    modelo.insumosComposicao.forEach(comp => {
+                        const insumoId = comp.insumoId;
+                        const quantidadeConsumida = parseFloat(comp.quantidade) * prodItem.quantidade;
+                        insumosConsumidos[insumoId] = (insumosConsumidos[insumoId] || 0) + quantidadeConsumida;
+                    });
+                }
+            }
+        });
+
+        return {
+            custoTotalProducao: custoTotalProducao,
+            lucroTotalProducao: lucroTotalProducao,
+            insumosConsumidos: insumosConsumidos
+        };
+    }
+
+    return {
+        calculateModelCost,
+        suggestSellingPrice,
+        calculateProductionSummary
+    };
+})();
