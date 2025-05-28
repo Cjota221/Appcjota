@@ -4,7 +4,7 @@
 }
 
 body {
-    /* ... (mantido do layout.css para contexto, mas o body deve ser definido em um lugar único) */
+    /* As propriedades de body já estão no layout.css para evitar duplicação */
     margin: 0;
     font-family: var(--font-family-primary);
     background-color: var(--background-dark);
