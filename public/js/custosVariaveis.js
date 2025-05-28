@@ -1,7 +1,7 @@
 // js/custosVariaveis.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#custos-variaveis-page')) { // Adicione um ID ao body do custos-variaveis.html
+    if (document.querySelector('#custos-variaveis-page')) {
         loadCustosVariaveis();
         document.getElementById('custoVariavelForm').addEventListener('submit', handleCustoVariavelSubmit);
         document.getElementById('custoVariavelModal').addEventListener('click', (e) => {
@@ -23,7 +23,7 @@ function loadCustosVariaveis() {
     custosVariaveisList.innerHTML = '';
 
     if (custosVariaveis.length === 0) {
-        custosVariaveisList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo variável cadastrado.</td></tr>'; // Alterado colspan para 3
+        custosVariaveisList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo variável cadastrado.</td></tr>';
         return;
     }
 
@@ -32,10 +32,11 @@ function loadCustosVariaveis() {
     custosVariaveis.forEach(custo => {
         totalPorUnidade += parseFloat(custo.valor);
         const row = document.createElement('tr');
+        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
-            <td>${custo.nome}</td>
-            <td>${parseFloat(custo.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td class="actions">
+            <td data-label="Nome do Custo">${custo.nome}</td>
+            <td data-label="Valor por Unidade (R$)">${parseFloat(custo.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td data-label="Ações" class="actions">
                 <button class="btn btn-info edit-btn" data-id="${custo.id}">Editar</button>
                 <button class="btn btn-danger delete-btn" data-id="${custo.id}">Excluir</button>
             </td>
@@ -114,10 +115,9 @@ function deleteCustoVariavel(id) {
 function clearCustoVariavelForm() {
     document.getElementById('custoVariavelForm').reset();
     document.getElementById('custoVariavelId').value = '';
-    // O título do modal será atualizado ao abrir o modal
 }
 
-// Reuso das funções de modal
+// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
