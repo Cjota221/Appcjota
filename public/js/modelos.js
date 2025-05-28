@@ -1,237 +1,414 @@
+// js/modelos.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (App.currentPage !== 'modelos.html') return;
-
-    const formModelo = document.getElementById('formAdicionarModelo');
-    const modeloIdInput = document.getElementById('modeloId');
-    const nomeModeloInput = document.getElementById('nomeModelo');
-    const insumosContainer = document.getElementById('insumosDoModeloContainer');
-    const btnAdicionarInsumoAoModelo = document.getElementById('btnAdicionarInsumoAoModelo');
-    const tabelaModelosBody = document.querySelector('#tabelaModelos tbody');
-    const selectInsumoTemplate = document.getElementById('selectInsumoTemplate'); // Para clonar
-    const btnCancelarEdicaoModelo = document.getElementById('btnCancelarEdicaoModelo');
-    
-    let modelos = Storage.getItems('modelos') || [];
-    let todosInsumos = Storage.getItems('insumos') || [];
-
-    // Função para renderizar a lista de modelos
-    const renderModelos = () => {
-        tabelaModelosBody.innerHTML = '';
-        if (modelos.length === 0) {
-            tabelaModelosBody.innerHTML = `<tr><td colspan="4" class="no-data-message">Nenhum modelo cadastrado.</td></tr>`;
-            return;
-        }
-        modelos.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(modelo => {
-            const custoTotalModelo = Calculadora.calcularCustoInsumosModelo(modelo, todosInsumos);
-            const row = tabelaModelosBody.insertRow();
-            row.innerHTML = `
-                <td>${modelo.id.substring(0,8)}...</td>
-                <td>${modelo.nome}</td>
-                <td>${App.formatCurrency(custoTotalModelo)}</td>
-                <td class="actions">
-                    <button class="btn btn-sm btn-secondary btn-editar-modelo" data-id="${modelo.id}" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                    <button class="btn btn-sm btn-danger btn-excluir-modelo" data-id="${modelo.id}" title="Excluir"><i class="fas fa-trash"></i> Excluir</button>
-                </td>
-            `;
+    if (document.querySelector('#modelos-page')) { // Adicione um ID ao body do modelos.html
+        loadModelos();
+        loadInsumosForSelection(); // Carrega insumos para o dropdown
+        document.getElementById('modeloForm').addEventListener('submit', handleModeloSubmit);
+        document.getElementById('modeloModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
+                closeModal('modeloModal');
+            }
         });
-        addEventListenersAcoesModelo();
-        App.updateDashboardSummaryCards();
-    };
+        document.getElementById('openAddModeloModal').addEventListener('click', () => openModal('modeloModal'));
 
-    // Função para adicionar um novo campo de seleção de insumo e quantidade ao formulário
-    const adicionarCampoInsumoAoFormulario = (insumoSelecionado = null) => {
-        const div = document.createElement('div');
-        div.className = 'form-row align-items-center mb-2 insumo-item-row';
-        
-        // Clonar o select de insumos
-        const selectInsumo = selectInsumoTemplate.cloneNode(true);
-        selectInsumo.removeAttribute('id'); // Remove ID para não duplicar
-        selectInsumo.classList.remove('d-none'); // Torna visível
-        selectInsumo.required = true;
-        
-        // Popular o select clonado
-        App.populateSelect(selectInsumo, todosInsumos, 'id', (insumo) => `${insumo.nome} (${insumo.unidade}) - ${App.formatCurrency(insumo.custo)}`);
-        
-        if (insumoSelecionado && insumoSelecionado.insumoId) {
-            selectInsumo.value = insumoSelecionado.insumoId;
-        }
+        document.getElementById('modeloImagem').addEventListener('change', handleImageUpload);
+        document.getElementById('addInsumoToModelo').addEventListener('click', addInsumoToModeloComposition);
+        document.getElementById('modeloInsumosComposicao').addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-insumo')) {
+                e.target.closest('.insumo-item').remove();
+                updateModeloCosts();
+            }
+        });
 
-        const inputQuantidade = document.createElement('input');
-        inputQuantidade.type = 'number';
-        inputQuantidade.className = 'form-control';
-        inputQuantidade.placeholder = 'Qtd.';
-        inputQuantidade.step = '0.01';
-        inputQuantidade.min = '0.01';
-        inputQuantidade.required = true;
-        inputQuantidade.value = (insumoSelecionado && insumoSelecionado.quantidade) ? App.formatCurrency(insumoSelecionado.quantidade, false).replace('.',',') : '';
+        // Event listeners para recalcular ao mudar inputs de custo/margem
+        document.getElementById('margemLucro').addEventListener('input', updateModeloCosts);
+        // Os campos de insumo serão atualizados ao adicionar/remover
 
-        const btnRemover = document.createElement('button');
-        btnRemover.type = 'button';
-        btnRemover.className = 'btn btn-sm btn-danger btn-remover-insumo-do-modelo';
-        btnRemover.innerHTML = '<i class="fas fa-times"></i>';
-        btnRemover.title = 'Remover Insumo';
-        btnRemover.onclick = () => div.remove();
+    }
+});
 
-        div.innerHTML = `
-            <div class="form-group" style="flex: 3;"></div>
-            <div class="form-group" style="flex: 1;"></div>
-            <div class="form-group" style="flex: 0 0 40px; text-align: right;"></div>
-        `;
-        div.children[0].appendChild(selectInsumo);
-        div.children[1].appendChild(inputQuantidade);
-        div.children[2].appendChild(btnRemover);
-        
-        insumosContainer.appendChild(div);
-    };
-    
-    // Popula o select template uma vez para ser clonado
-    if (selectInsumoTemplate) {
-         App.populateSelect(selectInsumoTemplate, todosInsumos, 'id', (insumo) => `${insumo.nome} (${insumo.unidade}) - ${App.formatCurrency(insumo.custo)}`);
+function loadModelos() {
+    const modelos = Storage.load('modelos');
+    const modelosList = document.getElementById('modelosList');
+    modelosList.innerHTML = ''; // Limpa a lista existente
+
+    if (modelos.length === 0) {
+        modelosList.innerHTML = '<div class="card"><p class="text-center">Nenhum modelo cadastrado.</p></div>';
+        return;
     }
 
+    modelos.forEach(modelo => {
+        const calculo = Calculadora.calculateModelCost(modelo.id);
+        const { precoVendaSugerido, lucroEstimado } = Calculadora.suggestSellingPrice(calculo ? calculo.custoTotalUnitario : 0, modelo.margemLucro);
 
-    // Event listener para o botão "Adicionar Insumo ao Modelo"
-    btnAdicionarInsumoAoModelo.addEventListener('click', () => adicionarCampoInsumoAoFormulario());
-
-    // Lidar com submissão do formulário (Adicionar/Editar Modelo)
-    formModelo.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = modeloIdInput.value;
-        const nome = nomeModeloInput.value.trim();
-        
-        if (!nome) {
-            App.showNotification('O nome do modelo é obrigatório.', 'error');
-            return;
-        }
-
-        const insumosDoModelo = [];
-        const insumoRows = insumosContainer.querySelectorAll('.insumo-item-row');
-        let formValido = true;
-        let insumosDuplicados = false;
-        const insumosAdicionados = new Set();
-
-        insumoRows.forEach(row => {
-            const select = row.querySelector('select');
-            const inputQtd = row.querySelector('input[type="number"]');
-            const insumoId = select.value;
-            const quantidade = App.parseFloatStrict(inputQtd.value);
-
-            if (!insumoId || isNaN(quantidade) || quantidade <= 0) {
-                formValido = false;
-                return;
-            }
-            if (insumosAdicionados.has(insumoId)) {
-                insumosDuplicados = true;
-                return;
-            }
-            insumosAdicionados.add(insumoId);
-            insumosDoModelo.push({ insumoId, quantidade });
-        });
-
-        if (!formValido) {
-            App.showNotification('Verifique os insumos. Todos devem ser selecionados e ter quantidade válida.', 'error');
-            return;
-        }
-        if (insumosDuplicados) {
-            App.showNotification('Não é permitido adicionar o mesmo insumo mais de uma vez ao modelo.', 'error');
-            return;
-        }
-        if (insumosDoModelo.length === 0) {
-            App.showNotification('Um modelo deve ter pelo menos um insumo.', 'error');
-            return;
-        }
-
-        const custoTotalInsumos = Calculadora.calcularCustoInsumosModelo({ insumos: insumosDoModelo }, todosInsumos);
-
-        if (id) { // Editando
-            const index = modelos.findIndex(m => m.id === id);
-            if (index > -1) {
-                modelos[index] = { ...modelos[index], nome, insumos: insumosDoModelo, custoInsumos: custoTotalInsumos };
-                App.showNotification('Modelo atualizado com sucesso!', 'success');
-            }
-        } else { // Adicionando
-            const novoModelo = {
-                id: Storage.generateUUID(),
-                nome,
-                insumos: insumosDoModelo,
-                custoInsumos: custoTotalInsumos
-            };
-            modelos.push(novoModelo);
-            App.showNotification('Modelo adicionado com sucesso!', 'success');
-        }
-
-        Storage.saveItems('modelos', modelos);
-        resetFormModelo();
-        renderModelos();
+        const card = document.createElement('div');
+        card.classList.add('card', 'modelo-card');
+        card.innerHTML = `
+            <div class="modelo-card-header">
+                <img src="${modelo.imagem || 'assets/img/placeholder.png'}" alt="${modelo.nome}" class="modelo-thumb">
+                <h3>${modelo.nome}</h3>
+            </div>
+            <div class="modelo-card-body">
+                <p><strong>Custo Unitário Total:</strong> ${((calculo ? calculo.custoTotalUnitario : 0) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p><strong>Margem de Lucro:</strong> ${modelo.margemLucro}%</p>
+                <p><strong>Preço de Venda Sugerido:</strong> ${precoVendaSugerido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                <p><strong>Lucro Estimado por Par:</strong> ${lucroEstimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+            </div>
+            <div class="modelo-card-actions">
+                <button class="btn btn-info edit-btn" data-id="${modelo.id}">Editar</button>
+                <button class="btn btn-danger delete-btn" data-id="${modelo.id}">Excluir</button>
+            </div>
+        `;
+        modelosList.appendChild(card);
     });
 
-    // Função para resetar o formulário de modelo
-    const resetFormModelo = () => {
-        formModelo.reset();
-        modeloIdInput.value = '';
-        insumosContainer.innerHTML = ''; // Limpa os campos de insumos dinâmicos
-        adicionarCampoInsumoAoFormulario(); // Adiciona um campo inicial
-        formModelo.querySelector('button[type="submit"]').textContent = 'Adicionar Modelo';
-        btnCancelarEdicaoModelo.style.display = 'none';
-    };
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', (e) => editModelo(e.target.dataset.id));
+    });
 
-    // Função para carregar dados de um modelo para edição
-    const handleEditarModelo = (id) => {
-        const modeloParaEditar = modelos.find(m => m.id === id);
-        if (modeloParaEditar) {
-            modeloIdInput.value = modeloParaEditar.id;
-            nomeModeloInput.value = modeloParaEditar.nome;
-            insumosContainer.innerHTML = ''; // Limpa campos existentes
-            modeloParaEditar.insumos.forEach(insumoItem => {
-                adicionarCampoInsumoAoFormulario(insumoItem);
-            });
-            if (modeloParaEditar.insumos.length === 0) { // Garante ao menos um campo se não houver insumos
-                adicionarCampoInsumoAoFormulario();
-            }
-            formModelo.querySelector('button[type="submit"]').textContent = 'Salvar Alterações';
-            btnCancelarEdicaoModelo.style.display = 'inline-block';
-            nomeModeloInput.focus();
-            window.scrollTo(0,0);
-        }
-    };
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => deleteModelo(e.target.dataset.id));
+    });
+}
 
-    // Função para excluir um modelo
-    const handleExcluirModelo = (id) => {
-        const producoes = Storage.getItems('producoes') || [];
-        const isUsedInProduction = producoes.some(p => p.modeloId === id);
+function loadInsumosForSelection() {
+    const insumos = Storage.load('insumos');
+    const insumoSelect = document.getElementById('insumoSelect');
+    insumoSelect.innerHTML = '<option value="">Selecione um Insumo</option>';
+    insumos.forEach(insumo => {
+        const option = document.createElement('option');
+        option.value = insumo.id;
+        option.textContent = `${insumo.nome} (${insumo.unidadeMedida} - ${parseFloat(insumo.custoUnidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`;
+        insumoSelect.appendChild(option);
+    });
+}
 
-        if (isUsedInProduction) {
-            App.showNotification('Este modelo está registrado em produções e não pode ser excluído.', 'error');
-            return;
-        }
-
-        if (confirm(`Tem certeza que deseja excluir o modelo "${modelos.find(m=>m.id===id)?.nome || id}"?`)) {
-            modelos = modelos.filter(m => m.id !== id);
-            Storage.saveItems('modelos', modelos);
-            renderModelos();
-            App.showNotification('Modelo excluído com sucesso!', 'success');
-            if (modeloIdInput.value === id) resetFormModelo();
-        }
-    };
-    
-    btnCancelarEdicaoModelo.addEventListener('click', resetFormModelo);
-
-    // Adicionar event listeners aos botões de ação da tabela
-    const addEventListenersAcoesModelo = () => {
-        document.querySelectorAll('.btn-editar-modelo').forEach(button => {
-            button.addEventListener('click', (e) => handleEditarModelo(e.currentTarget.dataset.id));
-        });
-        document.querySelectorAll('.btn-excluir-modelo').forEach(button => {
-            button.addEventListener('click', (e) => handleExcluirModelo(e.currentTarget.dataset.id));
-        });
-    };
-    
-    // Inicialização
-    if (todosInsumos.length === 0) {
-        App.showNotification('Cadastre insumos antes de criar modelos.', 'warning');
-        btnAdicionarInsumoAoModelo.disabled = true;
-        formModelo.querySelector('button[type="submit"]').disabled = true;
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `<img src="${e.target.result}" alt="Pré-visualização da imagem">`;
+            document.getElementById('modeloImagemBase64').value = e.target.result; // Armazena em base64
+        };
+        reader.readAsDataURL(file);
     } else {
-         adicionarCampoInsumoAoFormulario(); // Adiciona o primeiro campo de insumo ao carregar
+        document.getElementById('imagePreview').innerHTML = '<span>Pré-visualização da Imagem</span>';
+        document.getElementById('modeloImagemBase64').value = '';
     }
-    renderModelos();
-});
+}
+
+function addInsumoToModeloComposition() {
+    const insumoSelect = document.getElementById('insumoSelect');
+    const quantidadeInsumo = document.getElementById('quantidadeInsumo').value;
+
+    const insumoId = insumoSelect.value;
+    const insumoText = insumoSelect.options[insumoSelect.selectedIndex].text;
+
+    if (!insumoId || !quantidadeInsumo || parseFloat(quantidadeInsumo) <= 0) {
+        alert('Selecione um insumo e informe uma quantidade válida.');
+        return;
+    }
+
+    const insumosComposicaoList = document.getElementById('modeloInsumosComposicao');
+
+    // Verifica se o insumo já foi adicionado
+    const existingItem = insumosComposicaoList.querySelector(`li[data-id="${insumoId}"]`);
+    if (existingItem) {
+        alert('Este insumo já foi adicionado. Edite a quantidade diretamente ou remova e adicione novamente.');
+        return;
+    }
+
+    const listItem = document.createElement('li');
+    listItem.classList.add('insumo-item');
+    listItem.dataset.id = insumoId;
+    listItem.innerHTML = `
+        <span>${insumoText.split('(')[0].trim()} - Qtd: ${quantidadeInsumo}</span>
+        <input type="hidden" name="insumoId" value="${insumoId}">
+        <input type="hidden" name="quantidade" value="${quantidadeInsumo}">
+        <button type="button" class="btn btn-danger btn-sm remove-insumo">Remover</button>
+    `;
+    insumosComposicaoList.appendChild(listItem);
+
+    // Limpa os campos após adicionar
+    insumoSelect.value = '';
+    document.getElementById('quantidadeInsumo').value = '';
+
+    updateModeloCosts(); // Recalcula os custos ao adicionar um insumo
+}
+
+function updateModeloCosts() {
+    const modeloId = document.getElementById('modeloId').value;
+    const modeloNome = document.getElementById('modeloNome').value;
+    const margemLucro = parseFloat(document.getElementById('margemLucro').value) || 0;
+
+    const insumosComposicao = [];
+    document.querySelectorAll('#modeloInsumosComposicao .insumo-item').forEach(item => {
+        insumosComposicao.push({
+            insumoId: item.dataset.id,
+            quantidade: parseFloat(item.querySelector('input[name="quantidade"]').value)
+        });
+    });
+
+    // Simula o objeto modelo para cálculo temporário
+    const tempModelo = {
+        id: modeloId || 'temp', // Usa um ID temporário para cálculo
+        nome: modeloNome,
+        insumosComposicao: insumosComposicao,
+        margemLucro: margemLucro
+    };
+
+    // Salva o modelo temporariamente para que o calculador possa acessá-lo
+    // Isso é uma simplificação. Em um cenário real, você passaria os dados diretamente para a função de cálculo.
+    // Para fins de demonstração, vamos simular como se o modelo estivesse salvo.
+    // Uma alternativa seria modificar `calculateModelCost` para aceitar um objeto de modelo diretamente, sem depender do Storage.
+    // Para o MVP, vamos salvá-lo e imediatamente buscar.
+
+    // Isso é um hack: para que Calculadora.calculateModelCost possa encontrar o modelo,
+    // ele precisa estar no storage. Para evitar salvar modelos incompletos,
+    // vamos passar os dados brutos para o cálculo, se possível.
+    // Vamos ajustar `Calculadora.calculateModelCost` para aceitar um objeto de modelo.
+
+    const calculo = Calculadora.calculateModelCostFromObject(tempModelo);
+    if (calculo) {
+        const { precoVendaSugerido, lucroEstimado } = Calculadora.suggestSellingPrice(calculo.custoTotalUnitario, margemLucro);
+
+        document.getElementById('custoUnitarioTotal').textContent = calculo.custoTotalUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('precoVendaSugerido').textContent = precoVendaSugerido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('lucroEstimadoPorPar').textContent = lucroEstimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    } else {
+        document.getElementById('custoUnitarioTotal').textContent = 'R$ 0,00';
+        document.getElementById('precoVendaSugerido').textContent = 'R$ 0,00';
+        document.getElementById('lucroEstimadoPorPar').textContent = 'R$ 0,00';
+    }
+}
+
+// Adaptação de Calculadora.calculateModelCost para aceitar um objeto de modelo
+// (Isso seria feito no js/calculadora.js)
+// Para o propósito deste rascunho, vamos simular que esta função existe
+// Temporariamente, vou colocar a versão adaptada aqui para ilustração
+
+const Calculadora = (function() {
+    function calculateModelCost(modelId) {
+        const modelo = Storage.getById('modelos', modelId);
+        if (!modelo) {
+            console.error('Modelo não encontrado para cálculo:', modelId);
+            return null;
+        }
+        return calculateModelCostFromObject(modelo);
+    }
+
+    function calculateModelCostFromObject(modeloObj) {
+        const insumos = Storage.load('insumos');
+        const custosFixos = Storage.load('custosFixos');
+        const custosVariaveis = Storage.load('custosVariaveis');
+        const producoes = Storage.load('producoes');
+
+        let custoInsumos = 0;
+        modeloObj.insumosComposicao.forEach(comp => {
+            const insumo = insumos.find(i => i.id === comp.insumoId);
+            if (insumo) {
+                custoInsumos += parseFloat(insumo.custoUnidade) * parseFloat(comp.quantidade);
+            }
+        });
+
+        const totalProducaoMensal = producoes.reduce((acc, prod) => acc + parseFloat(prod.quantidade), 0);
+        let custoFixoRateadoPorUnidade = 0;
+        if (totalProducaoMensal > 0) {
+            const totalCustosFixos = custosFixos.reduce((acc, custo) => acc + parseFloat(custo.valorMensal), 0);
+            custoFixoRateadoPorUnidade = totalCustosFixos / totalProducaoMensal;
+        }
+
+        const totalCustosVariaveisPorUnidade = custosVariaveis.reduce((acc, custo) => acc + parseFloat(custo.valor), 0);
+
+        const custoTotalUnitario = custoInsumos + custoFixoRateadoPorUnidade + totalCustosVariaveisPorUnidade;
+
+        return {
+            custoInsumos: custoInsumos,
+            custoFixoRateado: custoFixoRateadoPorUnidade,
+            custoVariavel: totalCustosVariaveisPorUnidade,
+            custoTotalUnitario: custoTotalUnitario
+        };
+    }
+
+    function suggestSellingPrice(custoTotalUnitario, margemLucroPercentual) {
+        if (margemLucroPercentual < 0) {
+            return { precoVendaSugerido: 0, lucroEstimado: 0 };
+        }
+        const margemDecimal = margemLucroPercentual / 100;
+        // Evita divisão por zero ou negativo se a margem for 100% ou mais
+        if (1 - margemDecimal <= 0) return { precoVendaSugerido: Infinity, lucroEstimado: Infinity };
+        const precoVendaSugerido = custoTotalUnitario / (1 - margemDecimal);
+        const lucroEstimado = precoVendaSugerido - custoTotalUnitario;
+
+        return {
+            precoVendaSugerido: precoVendaSugerido,
+            lucroEstimado: lucroEstimado
+        };
+    }
+
+    function calculateProductionSummary(producaoId) {
+        const producao = Storage.getById('producoes', producaoId);
+        if (!producao) {
+            return null;
+        }
+
+        let custoTotalProducao = 0;
+        let lucroTotalProducao = 0;
+        let insumosConsumidos = {}; // { insumoId: quantidadeConsumida }
+
+        producao.modelosProduzidos.forEach(prodItem => {
+            const modelo = Storage.getById('modelos', prodItem.modeloId);
+            if (modelo) {
+                const modeloCalculo = calculateModelCostFromObject(modelo); // Use a função adaptada
+                if (modeloCalculo) {
+                    const precoVendaSugerido = suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
+                    custoTotalProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
+                    lucroTotalProducao += precoVendaSugerido.lucroEstimado * prodItem.quantidade;
+
+                    modelo.insumosComposicao.forEach(comp => {
+                        const insumoId = comp.insumoId;
+                        const quantidadeConsumida = parseFloat(comp.quantidade) * prodItem.quantidade;
+                        insumosConsumidos[insumoId] = (insumosConsumidos[insumoId] || 0) + quantidadeConsumida;
+                    });
+                }
+            }
+        });
+
+        return {
+            custoTotalProducao: custoTotalProducao,
+            lucroTotalProducao: lucroTotalProducao,
+            insumosConsumidos: insumosConsumidos
+        };
+    }
+
+    return {
+        calculateModelCost,
+        calculateModelCostFromObject, // Exponha a função adaptada
+        suggestSellingPrice,
+        calculateProductionSummary
+    };
+})();
+// Fim da adaptação temporária
+
+function handleModeloSubmit(event) {
+    event.preventDefault();
+
+    const modeloId = document.getElementById('modeloId').value;
+    const nome = document.getElementById('modeloNome').value;
+    const imagem = document.getElementById('modeloImagemBase64').value;
+    const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+
+    const insumosComposicao = [];
+    document.querySelectorAll('#modeloInsumosComposicao .insumo-item').forEach(item => {
+        insumosComposicao.push({
+            insumoId: item.querySelector('input[name="insumoId"]').value,
+            quantidade: parseFloat(item.querySelector('input[name="quantidade"]').value)
+        });
+    });
+
+    if (!nome || insumosComposicao.length === 0 || isNaN(margemLucro)) {
+        alert('Por favor, preencha todos os campos obrigatórios e adicione pelo menos um insumo.');
+        return;
+    }
+
+    const newModelo = {
+        id: modeloId || Storage.generateId(),
+        nome: nome,
+        imagem: imagem,
+        insumosComposicao: insumosComposicao,
+        margemLucro: margemLucro
+    };
+
+    let success;
+    if (modeloId) {
+        success = Storage.update('modelos', modeloId, newModelo);
+    } else {
+        success = Storage.add('modelos', newModelo);
+    }
+
+    if (success) {
+        alert(`Modelo ${modeloId ? 'atualizado' : 'cadastrado'} com sucesso!`);
+        closeModal('modeloModal');
+        clearModeloForm();
+        loadModelos();
+    } else {
+        alert('Falha ao salvar o modelo.');
+    }
+}
+
+function editModelo(id) {
+    const modelo = Storage.getById('modelos', id);
+    if (modelo) {
+        document.getElementById('modeloId').value = modelo.id;
+        document.getElementById('modeloNome').value = modelo.nome;
+        document.getElementById('margemLucro').value = modelo.margemLucro;
+
+        // Carregar imagem de volta
+        const preview = document.getElementById('imagePreview');
+        if (modelo.imagem) {
+            preview.innerHTML = `<img src="${modelo.imagem}" alt="Pré-visualização da imagem">`;
+            document.getElementById('modeloImagemBase64').value = modelo.imagem;
+        } else {
+            preview.innerHTML = '<span>Pré-visualização da Imagem</span>';
+            document.getElementById('modeloImagemBase64').value = '';
+        }
+
+        // Carregar insumos da composição
+        const insumosComposicaoList = document.getElementById('modeloInsumosComposicao');
+        insumosComposicaoList.innerHTML = '';
+        modelo.insumosComposicao.forEach(comp => {
+            const insumo = Storage.getById('insumos', comp.insumoId);
+            if (insumo) {
+                const listItem = document.createElement('li');
+                listItem.classList.add('insumo-item');
+                listItem.dataset.id = comp.insumoId;
+                listItem.innerHTML = `
+                    <span>${insumo.nome} - Qtd: ${comp.quantidade}</span>
+                    <input type="hidden" name="insumoId" value="${comp.insumoId}">
+                    <input type="hidden" name="quantidade" value="${comp.quantidade}">
+                    <button type="button" class="btn btn-danger btn-sm remove-insumo">Remover</button>
+                `;
+                insumosComposicaoList.appendChild(listItem);
+            }
+        });
+
+        document.getElementById('modalTitle').textContent = 'Editar Modelo';
+        openModal('modeloModal');
+        updateModeloCosts(); // Recalcula os custos ao carregar para edição
+    }
+}
+
+function deleteModelo(id) {
+    if (confirm('Tem certeza que deseja excluir este modelo? Isso também afetará produções relacionadas.')) {
+        if (Storage.remove('modelos', id)) {
+            alert('Modelo excluído com sucesso!');
+            loadModelos();
+        } else {
+            alert('Falha ao excluir o modelo.');
+        }
+    }
+}
+
+function clearModeloForm() {
+    document.getElementById('modeloForm').reset();
+    document.getElementById('modeloId').value = '';
+    document.getElementById('imagePreview').innerHTML = '<span>Pré-visualização da Imagem</span>';
+    document.getElementById('modeloImagemBase64').value = '';
+    document.getElementById('modeloInsumosComposicao').innerHTML = '';
+    document.getElementById('custoUnitarioTotal').textContent = 'R$ 0,00';
+    document.getElementById('precoVendaSugerido').textContent = 'R$ 0,00';
+    document.getElementById('lucroEstimadoPorPar').textContent = 'R$ 0,00';
+    document.getElementById('modalTitle').textContent = 'Adicionar Novo Modelo';
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    clearModeloForm();
+}
