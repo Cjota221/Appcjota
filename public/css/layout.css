@@ -1,66 +1,72 @@
 body {
     margin: 0;
     font-family: var(--font-family-primary);
-    background-color: var(--background-dark);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
     color: var(--text-light);
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    font-size: var(--font-size-base); /* Definindo o tamanho base */
-    line-height: 1.6;
+    /* Fundo com degradê */
+    background: radial-gradient(at top left, var(--gradient-start-color), var(--gradient-end-color));
+    background-attachment: fixed; /* Fixa o degradê */
+    overflow-y: auto; /* Permite rolagem do body se o conteúdo exceder */
 }
 
 .app-container {
     display: flex;
     width: 100%;
-    max-width: 1600px;
+    max-width: 1600px; /* Limite a largura máxima */
     min-height: 100vh;
-    box-shadow: var(--shadow-lg); /* Sombra mais destacada no container geral */
-    background-color: var(--background-dark);
+    background-color: transparent; /* Permite ver o degradê do body */
+    box-shadow: none; /* Remover sombra externa, o background já lida com isso */
 }
 
 .sidebar {
-    width: 280px; /* Ligeiramente mais largo */
+    width: 280px;
     background-color: var(--surface-dark);
     padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md); /* Sombra mais sutil */
+    box-shadow: var(--shadow-medium); /* Sombra sutil, mas presente */
     display: flex;
     flex-direction: column;
     position: sticky;
     top: 0;
     height: 100vh;
     overflow-y: auto;
-    transition: transform 0.3s ease-out, width 0.3s ease-out; /* Transição para width também */
+    transition: transform var(--transition-speed) var(--transition-timing);
     transform: translateX(0);
     z-index: 1000;
     border-right: 1px solid var(--border-color); /* Borda sutil */
+    border-radius: var(--border-radius-xl) 0 0 var(--border-radius-xl); /* Borda arredondada no canto esquerdo */
 }
 
 .sidebar.hidden {
     transform: translateX(-100%);
-    position: absolute;
+    position: absolute; /* Para não ocupar espaço quando escondido */
 }
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: var(--spacing-xl); /* Mais espaçamento */
+    margin-bottom: var(--spacing-xxl); /* Mais espaçamento */
     padding-bottom: var(--spacing-md);
     border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-header .logo {
-    width: 70px; /* Um pouco menor */
-    height: 70px;
+    width: 80px; /* Tamanho bom para o logo */
+    height: 80px;
     object-fit: contain;
     margin-bottom: var(--spacing-sm);
+    filter: drop-shadow(0 0 5px var(--primary-color)); /* Um brilho sutil no logo */
 }
 
 .sidebar-header h3 {
     margin: 0;
-    color: var(--primary-color);
-    font-size: var(--font-size-large); /* Tamanho de fonte consistente */
-    font-weight: 600;
+    color: var(--text-light); /* Texto mais claro */
+    font-size: var(--font-size-xl); /* Maior e mais impactante */
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .main-nav ul {
@@ -74,39 +80,45 @@ body {
 }
 
 .main-nav a {
-    display: flex; /* Para alinhar ícone e texto */
+    display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-lg); /* Mais padding */
-    color: var(--text-light);
+    gap: var(--spacing-md); /* Mais espaço entre ícone e texto */
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-muted); /* Cor mais suave para itens inativos */
     text-decoration: none;
-    border-radius: var(--border-radius-md); /* Bordas mais arredondadas */
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    border-radius: var(--border-radius-md);
+    transition: background-color var(--transition-speed) var(--transition-timing),
+                color var(--transition-speed) var(--transition-timing),
+                transform 0.1s ease-out;
     font-weight: 500;
+    font-size: var(--font-size-base);
 }
 
 .main-nav a:hover {
-    background-color: rgba(220, 46, 218, 0.1); /* Um hover mais suave da cor primária */
+    background-color: var(--surface-light); /* Fundo mais claro no hover */
     color: var(--primary-color);
-    transform: translateX(3px); /* Pequena animação */
+    transform: translateX(5px); /* Efeito mais pronunciado */
 }
 
 .main-nav a.active {
     background-color: var(--primary-color);
-    color: var(--background-dark);
-    box-shadow: var(--shadow-sm); /* Sombra para o item ativo */
+    color: var(--surface-dark); /* Texto escuro no fundo vibrante */
+    box-shadow: var(--shadow-light); /* Sombra sutil para o item ativo */
+    font-weight: 600;
 }
 
 .main-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    background-color: transparent; /* Permite ver o degradê do body */
+    border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0; /* Arredondamento no canto direito */
 }
 
 .header {
-    background-color: var(--surface-dark); /* Mesma cor dos cards */
-    padding: var(--spacing-md) var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--surface-dark); /* Fundo do header */
+    padding: var(--spacing-md) var(--spacing-xl);
+    box-shadow: var(--shadow-light);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -114,12 +126,13 @@ body {
     top: 0;
     z-index: 999;
     border-bottom: 1px solid var(--border-color);
+    border-radius: 0 var(--border-radius-xl) 0 0; /* Arredondamento no canto superior direito */
 }
 
 .header h1 {
     margin: 0;
     color: var(--text-light);
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-xl);
     font-weight: 700;
 }
 
@@ -127,12 +140,12 @@ body {
     background: none;
     border: none;
     color: var(--text-light);
-    font-size: 1.8rem;
+    font-size: var(--font-size-xxl);
     cursor: pointer;
     display: none;
     padding: var(--spacing-xs);
     border-radius: var(--border-radius-sm);
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-speed) var(--transition-timing);
 }
 
 .menu-toggle:hover {
@@ -140,24 +153,30 @@ body {
 }
 
 .content-area {
-    padding: var(--spacing-lg) var(--spacing-xl); /* Mais padding geral */
+    padding: var(--spacing-xl) var(--spacing-xxl); /* Mais padding geral */
     flex-grow: 1;
     overflow-y: auto;
 }
 
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 992px) { /* Tablet breakpoint */
     .app-container {
         flex-direction: column;
-        box-shadow: none; /* Remover sombra em mobile para ocupar toda a largura */
+        max-width: 95%; /* Ajuste para tablets */
+        border-radius: var(--border-radius-xl); /* Arredonda o container inteiro */
+        overflow: hidden; /* Garante que o conteúdo não vaze no arredondamento */
     }
 
     .sidebar {
         position: fixed;
-        width: 250px; /* Ajuste para mobile */
+        width: 250px;
         height: 100%;
         transform: translateX(-100%);
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+        box-shadow: var(--shadow-heavy);
+        border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0; /* Apenas no lado direito quando aparece */
+        border-right: none;
+        top: 0;
+        left: 0;
     }
 
     .sidebar.active {
@@ -170,25 +189,43 @@ body {
 
     .main-content {
         margin-left: 0;
+        border-radius: var(--border-radius-xl); /* Arredonda o main-content inteiro */
     }
 
     .header {
-        padding-left: var(--spacing-md); /* Ajuste */
+        padding-left: var(--spacing-lg);
         justify-content: flex-start;
         gap: var(--spacing-md);
-    }
-
-    .header h1 {
-        font-size: 1.3rem;
+        border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0; /* Arredonda o topo em tablets */
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) { /* Mobile breakpoint */
+    .app-container {
+        max-width: 100%; /* Ocupa toda a largura em mobile */
+        border-radius: 0;
+        min-height: 100vh; /* Para garantir que o corpo do app estique */
+    }
+
+    .sidebar {
+        width: 80%; /* Mais largo em mobile */
+        max-width: 300px;
+    }
+
+    .header h1 {
+        font-size: var(--font-size-large);
+    }
+
     .content-area {
-        padding: var(--spacing-md); /* Menos padding em telas muito pequenas */
+        padding: var(--spacing-lg); /* Menos padding em telas muito pequenas */
     }
 
     .dashboard-grid {
         grid-template-columns: 1fr; /* Forçar uma única coluna */
+        gap: var(--spacing-lg);
+    }
+
+    .card {
+        padding: var(--spacing-lg);
     }
 }
