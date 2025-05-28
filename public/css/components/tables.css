@@ -1,18 +1,18 @@
 .data-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 var(--spacing-sm); /* Espaçamento entre linhas */
+    border-spacing: 0 var(--spacing-sm);
     margin-top: var(--spacing-lg);
     overflow-x: auto;
-    display: block; /* Para permitir overflow-x */
-    white-space: nowrap; /* Evita quebra de linha nas células */
-    -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
+    display: block;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table thead, .data-table tbody {
     display: table;
     width: 100%;
-    table-layout: fixed; /* Colunas de largura igual */
+    table-layout: fixed;
 }
 
 
@@ -21,27 +21,27 @@
     padding: var(--spacing-md) var(--spacing-lg);
     border: none;
     text-align: left;
-    background-color: var(--surface-dark); /* Cor de fundo padrão */
+    background-color: var(--surface-dark);
     color: var(--text-light);
     vertical-align: middle;
 }
 
 .data-table th {
-    background-color: var(--surface-light); /* Fundo mais claro para o cabeçalho */
-    color: var(--text-light); /* Texto claro no header */
+    background-color: var(--surface-light);
+    color: var(--text-light);
     font-weight: 700;
     text-transform: uppercase;
     font-size: var(--font-size-small);
     position: sticky;
     top: 0;
     z-index: 1;
-    border-bottom: 1px solid var(--border-color); /* Borda sutil abaixo do header */
+    border-bottom: 1px solid var(--border-color);
 }
 
 .data-table tbody tr {
     background-color: var(--surface-dark);
     border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-light); /* Sombra sutil para cada linha */
+    box-shadow: var(--shadow-light);
     transition: transform var(--transition-speed) var(--transition-timing),
                 box-shadow var(--transition-speed) var(--transition-timing),
                 background-color var(--transition-speed) var(--transition-timing);
@@ -50,14 +50,14 @@
 .data-table tbody tr:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-medium);
-    background-color: var(--surface-light); /* Fundo ligeiramente mais claro no hover */
+    background-color: var(--surface-light);
 }
 
 .data-table tbody tr:nth-child(even) {
-    background-color: #262645; /* Um tom ligeiramente diferente para linhas pares */
+    background-color: #262645;
 }
 .data-table tbody tr:nth-child(even):hover {
-     background-color: var(--surface-light); /* Manter o mesmo hover */
+     background-color: var(--surface-light);
 }
 
 
@@ -94,30 +94,29 @@
 /* Responsividade para tabelas */
 @media (max-width: 768px) {
     .data-table {
-        margin-left: 0; /* Remove margem desnecessária */
+        margin-left: 0;
         margin-right: 0;
-        width: calc(100% - var(--spacing-md) * 2); /* Ajusta largura para caber padding */
+        width: calc(100% - var(--spacing-md) * 2);
     }
 
     .data-table thead {
-        /* Esconder cabeçalho da tabela em mobile, se necessário para reformatar */
         /* display: none; */
     }
 
     .data-table tbody tr {
-        margin-bottom: var(--spacing-md); /* Mais espaço entre as "linhas-cards" */
-        display: block; /* Cada linha como um bloco separado */
+        margin-bottom: var(--spacing-md);
+        display: block;
         border: 1px solid var(--border-color);
         box-shadow: var(--shadow-light);
         border-radius: var(--border-radius-lg);
     }
 
     .data-table tbody td {
-        display: block; /* Cada célula como um bloco */
+        display: block;
         text-align: right;
-        padding-left: 50%; /* Espaço para o pseudo-elemento da label */
+        padding-left: 50%;
         position: relative;
-        border-bottom: 1px dotted var(--border-color); /* Separador sutil entre células */
+        border-bottom: 1px dotted var(--border-color);
     }
 
     .data-table tbody td:last-child {
@@ -125,7 +124,7 @@
     }
 
     .data-table tbody td::before {
-        content: attr(data-label); /* Usa o atributo data-label para mostrar o cabeçalho */
+        content: attr(data-label);
         position: absolute;
         left: 0;
         width: 50%;
@@ -136,7 +135,7 @@
     }
 
     .data-table .actions {
-        justify-content: flex-end; /* Alinhar botões à direita no mobile */
+        justify-content: flex-end;
         padding-top: var(--spacing-md);
     }
 }
