@@ -3,82 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - AppCJ</title>
+    <title>AppCJ - Dashboard</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> </head>
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/tables.css">
+    </head>
 <body>
-    <aside class="app-sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
-                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
-                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
-                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
-                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
-                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
-                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
-                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
-                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
-
-    <header class="app-header">
-         <div class="logo-header-container">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <div class="header-title">
-            <h1>Dashboard</h1>
-        </div>
-        <div></div>
-    </header>
-
-    <main class="main-content">
-        <div class="container">
-            <section id="dashboard-content">
-                <h2 class="mb-3">Bem-vindo ao AppCJ!</h2>
-                <p class="mb-3">Sua ferramenta completa para cálculo de custos e precificação.</p>
-                
-                <div class="summary-cards-grid">
-                    <div class="summary-card">
-                        <h4><i class="fas fa-boxes text-primary"></i> Total Insumos</h4>
-                        <p class="value" id="total-insumos">0</p>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
+                <h3>AppCJ</h3>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-item active">Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item">Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item">Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>Dashboard</h1>
+                <div class="user-info">
                     </div>
-                    <div class="summary-card secondary-accent">
-                        <h4><i class="fas fa-shoe-prints text-secondary"></i> Total Modelos</h4>
-                        <p class="value" id="total-modelos">0</p>
+            </header>
+            <section class="content-area">
+                <div class="dashboard-grid">
+                    <div class="card summary-card">
+                        <h3>Total de Modelos Cadastrados</h3>
+                        <p id="totalModelos">0</p>
                     </div>
-                    <div class="summary-card">
-                        <h4><i class="fas fa-file-invoice-dollar text-primary"></i> Custo Fixo Mensal</h4>
-                        <p class="value" id="total-custo-fixo">R$ 0,00</p>
+                    <div class="card summary-card">
+                        <h3>Custo Médio por Unidade</h3>
+                        <p id="custoMedioUnidade">R$ 0,00</p>
                     </div>
-                     <div class="summary-card secondary-accent">
-                        <h4><i class="fas fa-industry text-secondary"></i> Produções (Mês)</h4>
-                        <p class="value" id="total-producoes-mes">0</p>
+                    <div class="card summary-card">
+                        <h3>Produção do Mês</h3>
+                        <p id="producaoMes">0 Pares</p>
+                    </div>
+                    <div class="card summary-card">
+                        <h3>Lucro Estimado</h3>
+                        <p id="lucroEstimado">R$ 0,00</p>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header primary">
-                        <h3 class="text-white"><i class="fas fa-rocket"></i> Acesso Rápido</h3>
-                    </div>
-                    <div class="card-body btn-group">
-                        <a href="insumos.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Cadastrar Insumo</a>
-                        <a href="modelos.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Cadastrar Modelo</a>
-                        <a href="producao.html" class="btn btn-secondary"><i class="fas fa-cogs"></i> Nova Produção</a>
-                    </div>
+                <div class="card chart-card">
+                    <h3>Produção Recente</h3>
+                    <canvas id="producaoChart"></canvas>
                 </div>
-                 <div id="notification-area"></div> </section>
-        </div>
-    </main>
+            </section>
+        </main>
+    </div>
 
     <script src="js/storage.js"></script>
+    <script src="js/calculadora.js"></script>
     <script src="js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </body>
 </html>
