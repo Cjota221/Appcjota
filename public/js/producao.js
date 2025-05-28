@@ -1,7 +1,7 @@
 // js/producao.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#producao-page')) { // Adicione um ID ao body do producao.html
+    if (document.querySelector('#producao-page')) {
         loadProducoes();
         loadModelosForProducao();
         document.getElementById('producaoForm').addEventListener('submit', handleProducaoSubmit);
@@ -38,16 +38,17 @@ function loadProducoes() {
 
     producoes.forEach(producao => {
         const summary = Calculadora.calculateProductionSummary(producao.id);
-        const totalPares = producao.modelosProduzidos.reduce((acc, item) => acc + parseFloat(item.quantidade), 0); // Correção para parseFloat
+        const totalPares = producao.modelosProduzidos.reduce((acc, item) => acc + parseFloat(item.quantidade), 0);
 
         const row = document.createElement('tr');
+        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
-            <td>${new Date(producao.data).toLocaleDateString('pt-BR')}</td>
-            <td>${producao.nomeProducao}</td>
-            <td>${totalPares} Pares</td>
-            <td>${(summary ? summary.custoTotalProducao : 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td>${(summary ? summary.lucroTotalProducao : 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td class="actions">
+            <td data-label="Data">${new Date(producao.data).toLocaleDateString('pt-BR')}</td>
+            <td data-label="Nome da Produção">${producao.nomeProducao}</td>
+            <td data-label="Total de Pares">${totalPares} Pares</td>
+            <td data-label="Custo Total">${(summary ? summary.custoTotalProducao : 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td data-label="Lucro Total Estimado">${(summary ? summary.lucroTotalProducao : 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td data-label="Ações" class="actions">
                 <button class="btn btn-info edit-btn" data-id="${producao.id}">Detalhes/Editar</button>
                 <button class="btn btn-danger delete-btn" data-id="${producao.id}">Excluir</button>
             </td>
@@ -91,7 +92,6 @@ function addModeloToProducaoComposition() {
 
     const producaoModelosComposicaoList = document.getElementById('producaoModelosComposicao');
 
-    // Verifica se o modelo já foi adicionado
     const existingItem = producaoModelosComposicaoList.querySelector(`li[data-id="${modeloId}"]`);
     if (existingItem) {
         alert('Este modelo já foi adicionado para esta produção. Edite a quantidade diretamente ou remova e adicione novamente.');
@@ -110,7 +110,6 @@ function addModeloToProducaoComposition() {
     `;
     producaoModelosComposicaoList.appendChild(listItem);
 
-    // Limpa os campos após adicionar
     modeloSelect.value = '';
     document.getElementById('quantidadeProducaoModelo').value = '';
     document.getElementById('margemLucroProducaoModelo').value = '';
@@ -135,7 +134,7 @@ function updateProducaoSummary() {
     modelosProduzidos.forEach(prodItem => {
         const modelo = Storage.getById('modelos', prodItem.modeloId);
         if (modelo) {
-            const modeloCalculo = Calculadora.calculateModelCostFromObject(modelo); // Usa a função adaptada
+            const modeloCalculo = Calculadora.calculateModelCostFromObject(modelo);
             if (modeloCalculo) {
                 const precoVendaSugerido = Calculadora.suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
                 totalCustoProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
@@ -247,10 +246,9 @@ function clearProducaoForm() {
     document.getElementById('lucroTotalProducao').textContent = 'R$ 0,00';
     document.getElementById('totalParesProduzidos').textContent = '0 Pares';
     document.getElementById('precoMinimoVenda').textContent = 'R$ 0,00';
-    // O título do modal será atualizado ao abrir o modal
 }
 
-// Reuso das funções de modal
+// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
