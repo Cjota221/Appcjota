@@ -2,17 +2,20 @@
     /* Cores */
     --primary-color: #dc2eda; /* Pink Vibrante */
     --secondary-color: #f2ea21; /* Amarelo Vibrante */
-    --background-dark: #1a1a1a;
-    --text-light: #f5f5f5;
-    --text-dark: #333;
-    --card-background: #2a2a2a;
-    --border-color: #444;
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --info-color: #17a2b8;
+    --background-dark: #121212; /* Um pouco mais escuro para o fundo principal */
+    --surface-dark: #1E1E1E; /* Cor para cards e modais, mais suave que o fundo */
+    --text-light: #E0E0E0; /* Texto principal mais claro */
+    --text-muted: #A0A0A0; /* Texto secundário/cinza, com bom contraste */
+    --border-color: rgba(255, 255, 255, 0.1); /* Bordas muito sutis */
+    --success-color: #4CAF50; /* Verde mais vibrante e moderno */
+    --danger-color: #F44336; /* Vermelho mais vibrante e moderno */
+    --info-color: #2196F3; /* Azul mais vibrante e moderno */
 
     /* Fontes */
-    --font-family-primary: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-family-primary: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Adicionando Inter como fallback */
+    --font-size-base: 1rem;
+    --font-size-small: 0.875rem;
+    --font-size-large: 1.25rem;
 
     /* Espaçamento */
     --spacing-xs: 4px;
@@ -20,8 +23,15 @@
     --spacing-md: 16px;
     --spacing-lg: 24px;
     --spacing-xl: 32px;
+    --spacing-xxl: 48px;
 
     /* Borda arredondada */
     --border-radius-sm: 4px;
-    --border-radius-md: 8px;
+    --border-radius-md: 8px; /* Ligeiramente maior para um visual mais suave */
+    --border-radius-lg: 12px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
 }
