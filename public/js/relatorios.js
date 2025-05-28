@@ -15,7 +15,7 @@ function renderCustoPorModeloChart() {
     const data = [];
 
     modelos.forEach(modelo => {
-        const calculo = Calculadora.calculateModelCost(modelo.id);
+        const calculo = Calculadora.calculateModelCostFromObject(modelo); // Usar a função que aceita o objeto
         if (calculo) {
             labels.push(modelo.nome);
             data.push(calculo.custoTotalUnitario);
