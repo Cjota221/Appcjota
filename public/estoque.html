@@ -3,93 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque - AppCJ</title>
+    <title>AppCJ - Estoque</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/tables.css">
 </head>
-<body>
-    <aside class="app-sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
-                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
-                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
-                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
-                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
-                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
-                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
-                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
-                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
-
-    <header class="app-header">
-         <div class="logo-header-container">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <div class="header-title">
-            <h1>Controle de Estoque de Insumos</h1>
-        </div>
-        <div></div>
-    </header>
-
-    <main class="main-content">
-        <div class="container">
-            <section id="estoque-management">
-                 <div class="card mb-3">
-                    <div class="card-header primary">
-                        <h3 class="text-white">Registrar Entrada de Estoque</h3>
-                    </div>
-                    <div class="card-body">
-                        <form id="formAdicionarEstoque">
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 2;">
-                                    <label for="selectInsumoEstoque">Insumo:</label>
-                                    <select id="selectInsumoEstoque" class="form-control" required></select>
-                                </div>
-                                <div class="form-group" style="flex: 1;">
-                                    <label for="quantidadeEntradaEstoque">Quantidade Entrada:</label>
-                                    <input type="number" id="quantidadeEntradaEstoque" class="form-control" min="0.01" step="0.01" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-plus-circle"></i> Adicionar ao Estoque</button>
-                        </form>
-                    </div>
-                </div>
-
+<body id="estoque-page">
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
+                <h3>AppCJ</h3>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-item">Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item">Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item">Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item active">Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>Estoque de Insumos</h1>
+                <div class="user-info"></div>
+            </header>
+            <section class="content-area">
                 <div class="card">
-                    <div class="card-header"><h3><i class="fas fa-clipboard-list"></i> Estoque Atual de Insumos</h3></div>
-                    <div class="card-body">
-                        <div class="table-wrapper">
-                            <table id="tabelaEstoque" class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Insumo</th>
-                                        <th>Unidade</th>
-                                        <th>Quantidade em Estoque</th>
-                                        <th>Valor em Estoque (Custo)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    </tbody>
-                            </table>
+                    <div class="card-header">
+                        <h2>Resumo de Estoque</h2>
                         </div>
-                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Insumo</th>
+                                <th>Unidade</th>
+                                <th>Consumido (Produção)</th>
+                                <th>Saldo Estimado (Inicial - Consumo)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="estoqueList">
+                            </tbody>
+                    </table>
+                    <p style="margin-top: var(--spacing-md); font-size: 0.9rem; color: #aaa;">
+                        * O saldo estimado é baseado em um valor inicial arbitrário menos o consumo registrado nas produções.
+                        Para um controle de estoque preciso, seria necessário implementar o registro de entradas de insumos.
+                    </p>
                 </div>
             </section>
-            <div id="notification-area"></div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script src="js/storage.js"></script>
+    <script src="js/calculadora.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/calculadora.js"></script> <script src="js/estoque.js"></script>
+    <script src="js/estoque.js"></script>
 </body>
 </html>
