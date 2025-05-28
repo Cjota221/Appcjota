@@ -1,7 +1,7 @@
 // js/custosFixos.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('#custos-fixos-page')) { // Adicione um ID ao body do custos-fixos.html
+    if (document.querySelector('#custos-fixos-page')) {
         loadCustosFixos();
         document.getElementById('custoFixoForm').addEventListener('submit', handleCustoFixoSubmit);
         document.getElementById('custoFixoModal').addEventListener('click', (e) => {
@@ -23,7 +23,7 @@ function loadCustosFixos() {
     custosFixosList.innerHTML = '';
 
     if (custosFixos.length === 0) {
-        custosFixosList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo fixo cadastrado.</td></tr>'; // Alterado colspan para 3
+        custosFixosList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo fixo cadastrado.</td></tr>';
         return;
     }
 
@@ -32,10 +32,11 @@ function loadCustosFixos() {
     custosFixos.forEach(custo => {
         totalMensal += parseFloat(custo.valorMensal);
         const row = document.createElement('tr');
+        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
-            <td>${custo.nome}</td>
-            <td>${parseFloat(custo.valorMensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-            <td class="actions">
+            <td data-label="Nome do Custo">${custo.nome}</td>
+            <td data-label="Valor Mensal (R$)">${parseFloat(custo.valorMensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td data-label="Ações" class="actions">
                 <button class="btn btn-info edit-btn" data-id="${custo.id}">Editar</button>
                 <button class="btn btn-danger delete-btn" data-id="${custo.id}">Excluir</button>
             </td>
@@ -113,14 +114,9 @@ function deleteCustoFixo(id) {
 function clearCustoFixoForm() {
     document.getElementById('custoFixoForm').reset();
     document.getElementById('custoFixoId').value = '';
-    // O título do modal será atualizado ao abrir o modal
 }
 
-// Reuso das funções de modal (definidas em js/app.js ou aqui, conforme sua organização)
-// As funções openModal e closeModal já foram definidas acima em insumos.js,
-// é importante não redefinir em cada arquivo se elas são globais.
-// Para este exemplo, estou as mantendo em cada arquivo para fácil cópia e colagem,
-// mas em um projeto real, elas estariam em app.js ou um arquivo de utilitários global.
+// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
