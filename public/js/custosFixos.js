@@ -1,112 +1,123 @@
+// js/custosFixos.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (App.currentPage !== 'custos-fixos.html') return;
-
-    const formCustoFixo = document.getElementById('formAdicionarCustoFixo');
-    const tabelaCustosFixosBody = document.querySelector('#tabelaCustosFixos tbody');
-    const custoFixoIdInput = document.getElementById('custoFixoId');
-    const descricaoCustoFixoInput = document.getElementById('descricaoCustoFixo');
-    const valorCustoFixoInput = document.getElementById('valorCustoFixo');
-    const btnCancelarEdicao = document.getElementById('btnCancelarEdicaoCustoFixo');
-    const totalCustosFixosElement = document.getElementById('totalCustosFixos');
-
-    let custosFixos = Storage.getItems('custosFixos') || [];
-
-    const renderCustosFixos = () => {
-        tabelaCustosFixosBody.innerHTML = '';
-        let totalGeral = 0;
-        if (custosFixos.length === 0) {
-            tabelaCustosFixosBody.innerHTML = `<tr><td colspan="4" class="no-data-message">Nenhum custo fixo cadastrado.</td></tr>`;
-        } else {
-            custosFixos.sort((a, b) => a.descricao.localeCompare(b.descricao)).forEach(custo => {
-                const valor = App.parseFloatStrict(custo.valor);
-                totalGeral += valor;
-                const row = tabelaCustosFixosBody.insertRow();
-                row.innerHTML = `
-                    <td>${custo.id.substring(0,8)}...</td>
-                    <td>${custo.descricao}</td>
-                    <td>${App.formatCurrency(valor)}</td>
-                    <td class="actions">
-                        <button class="btn btn-sm btn-secondary btn-editar" data-id="${custo.id}" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="btn btn-sm btn-danger btn-excluir" data-id="${custo.id}" title="Excluir"><i class="fas fa-trash"></i> Excluir</button>
-                    </td>
-                `;
-            });
-        }
-        totalCustosFixosElement.textContent = App.formatCurrency(totalGeral);
-        addEventListenersAcoes();
-        App.updateDashboardSummaryCards(); // Atualiza card no dashboard
-    };
-
-    const addEventListenersAcoes = () => {
-        document.querySelectorAll('#tabelaCustosFixos .btn-editar').forEach(button => {
-            button.addEventListener('click', (e) => handleEditar(e.currentTarget.dataset.id));
-        });
-        document.querySelectorAll('#tabelaCustosFixos .btn-excluir').forEach(button => {
-            button.addEventListener('click', (e) => handleExcluir(e.currentTarget.dataset.id));
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const id = custoFixoIdInput.value;
-        const descricao = descricaoCustoFixoInput.value.trim();
-        const valor = App.parseFloatStrict(valorCustoFixoInput.value);
-
-        if (!descricao || isNaN(valor) || valor <= 0) {
-            App.showNotification('Descrição e valor válido são obrigatórios.', 'error');
-            return;
-        }
-
-        if (id) { // Editando
-            const index = custosFixos.findIndex(cf => cf.id === id);
-            if (index > -1) {
-                custosFixos[index] = { ...custosFixos[index], descricao, valor };
-                App.showNotification('Custo fixo atualizado!', 'success');
+    if (document.querySelector('#custos-fixos-page')) { // Adicione um ID ao body do custos-fixos.html
+        loadCustosFixos();
+        document.getElementById('custoFixoForm').addEventListener('submit', handleCustoFixoSubmit);
+        document.getElementById('custoFixoModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
+                closeModal('custoFixoModal');
             }
-        } else { // Adicionando
-            const novoCusto = { id: Storage.generateUUID(), descricao, valor };
-            custosFixos.push(novoCusto);
-            App.showNotification('Custo fixo adicionado!', 'success');
-        }
-        
-        Storage.saveItems('custosFixos', custosFixos);
-        resetForm();
-        renderCustosFixos();
-    };
-
-    const handleEditar = (id) => {
-        const custo = custosFixos.find(cf => cf.id === id);
-        if (custo) {
-            custoFixoIdInput.value = custo.id;
-            descricaoCustoFixoInput.value = custo.descricao;
-            valorCustoFixoInput.value = App.formatCurrency(custo.valor, false).replace('.',',');
-            formCustoFixo.querySelector('button[type="submit"]').textContent = 'Salvar Alterações';
-            btnCancelarEdicao.style.display = 'inline-block';
-            descricaoCustoFixoInput.focus();
-            window.scrollTo(0,0);
-        }
-    };
-
-    const handleExcluir = (id) => {
-        const custo = custosFixos.find(cf => cf.id === id);
-        if (confirm(`Tem certeza que deseja excluir o custo fixo "${custo?.descricao || id}"?`)) {
-            custosFixos = custosFixos.filter(cf => cf.id !== id);
-            Storage.saveItems('custosFixos', custosFixos);
-            renderCustosFixos();
-            App.showNotification('Custo fixo excluído!', 'success');
-            if (custoFixoIdInput.value === id) resetForm();
-        }
-    };
-
-    const resetForm = () => {
-        formCustoFixo.reset();
-        custoFixoIdInput.value = '';
-        formCustoFixo.querySelector('button[type="submit"]').textContent = 'Adicionar Custo Fixo';
-        btnCancelarEdicao.style.display = 'none';
-    };
-
-    formCustoFixo.addEventListener('submit', handleSubmit);
-    btnCancelarEdicao.addEventListener('click', resetForm);
-
-    renderCustosFixos();
+        });
+        document.getElementById('openAddCustoFixoModal').addEventListener('click', () => openModal('custoFixoModal'));
+    }
 });
+
+function loadCustosFixos() {
+    const custosFixos = Storage.load('custosFixos');
+    const custosFixosList = document.getElementById('custosFixosList');
+    custosFixosList.innerHTML = '';
+
+    if (custosFixos.length === 0) {
+        custosFixosList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum custo fixo cadastrado.</td></tr>';
+        return;
+    }
+
+    let totalMensal = 0;
+
+    custosFixos.forEach(custo => {
+        totalMensal += parseFloat(custo.valorMensal);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${custo.nome}</td>
+            <td>${parseFloat(custo.valorMensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td class="actions">
+                <button class="btn btn-info edit-btn" data-id="${custo.id}">Editar</button>
+                <button class="btn btn-danger delete-btn" data-id="${custo.id}">Excluir</button>
+            </td>
+        `;
+        custosFixosList.appendChild(row);
+    });
+
+    document.getElementById('totalCustosFixosMensais').textContent = totalMensal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', (e) => editCustoFixo(e.target.dataset.id));
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => deleteCustoFixo(e.target.dataset.id));
+    });
+}
+
+function handleCustoFixoSubmit(event) {
+    event.preventDefault();
+
+    const custoFixoId = document.getElementById('custoFixoId').value;
+    const nome = document.getElementById('custoFixoNome').value;
+    const valorMensal = document.getElementById('valorMensal').value;
+
+    if (!nome || !valorMensal) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    const newCustoFixo = {
+        id: custoFixoId || Storage.generateId(),
+        nome: nome,
+        valorMensal: parseFloat(valorMensal)
+    };
+
+    let success;
+    if (custoFixoId) {
+        success = Storage.update('custosFixos', custoFixoId, newCustoFixo);
+    } else {
+        success = Storage.add('custosFixos', newCustoFixo);
+    }
+
+    if (success) {
+        alert(`Custo Fixo ${custoFixoId ? 'atualizado' : 'cadastrado'} com sucesso!`);
+        closeModal('custoFixoModal');
+        clearCustoFixoForm();
+        loadCustosFixos();
+    } else {
+        alert('Falha ao salvar o custo fixo.');
+    }
+}
+
+function editCustoFixo(id) {
+    const custoFixo = Storage.getById('custosFixos', id);
+    if (custoFixo) {
+        document.getElementById('custoFixoId').value = custoFixo.id;
+        document.getElementById('custoFixoNome').value = custoFixo.nome;
+        document.getElementById('valorMensal').value = custoFixo.valorMensal;
+        document.getElementById('modalTitle').textContent = 'Editar Custo Fixo';
+        openModal('custoFixoModal');
+    }
+}
+
+function deleteCustoFixo(id) {
+    if (confirm('Tem certeza que deseja excluir este custo fixo?')) {
+        if (Storage.remove('custosFixos', id)) {
+            alert('Custo Fixo excluído com sucesso!');
+            loadCustosFixos();
+        } else {
+            alert('Falha ao excluir o custo fixo.');
+        }
+    }
+}
+
+function clearCustoFixoForm() {
+    document.getElementById('custoFixoForm').reset();
+    document.getElementById('custoFixoId').value = '';
+    document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Fixo';
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    clearCustoFixoForm();
+}
