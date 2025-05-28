@@ -1,5 +1,5 @@
 .modal {
-    display: none; /* Escondido por padrão - será 'flex' quando a classe 'open' for adicionada */
+    display: flex; /* Começa flexível, mas transparente e sem interação */
     position: fixed;
     z-index: 1001;
     left: 0;
@@ -7,37 +7,36 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo um pouco menos opaco */
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo mais opaco para o modal */
     justify-content: center;
     align-items: center;
-    opacity: 0; /* Começa invisível */
-    pointer-events: none; /* Não captura cliques */
-    transition: opacity 0.3s ease-out;
+    opacity: 0;
+    pointer-events: none; /* Não captura cliques quando invisível */
+    transition: opacity var(--transition-speed) var(--transition-timing);
 }
 
-.modal.open { /* Classe adicionada via JS quando o modal está aberto */
+.modal.open {
     opacity: 1;
-    pointer-events: auto;
-    display: flex; /* Exibe o modal para que as transições funcionem */
+    pointer-events: auto; /* Captura cliques quando visível */
 }
 
 .modal-content {
-    background-color: var(--surface-dark); /* Nova cor */
-    margin: auto;
-    padding: var(--spacing-xl); /* Mais padding */
-    border-radius: var(--border-radius-lg); /* Mais arredondado */
+    background-color: var(--surface-dark);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl); /* Mais arredondado */
     width: 90%;
-    max-width: 700px; /* Um pouco mais largo para modais de formulário */
-    box-shadow: var(--shadow-lg); /* Sombra mais destacada */
+    max-width: 700px;
+    box-shadow: var(--shadow-heavy); /* Sombra pesada para destacar */
     position: relative;
-    transform: translateY(-20px); /* Começa um pouco acima */
-    opacity: 0; /* Começa invisível para a transição */
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-    border: 1px solid var(--border-color); /* Borda sutil */
+    transform: translateY(-50px); /* Desce do topo */
+    opacity: 0;
+    transition: transform var(--transition-speed) var(--transition-timing),
+                opacity var(--transition-speed) var(--transition-timing);
+    border: 1px solid var(--border-color);
 }
 
 .modal.open .modal-content {
-    transform: translateY(0); /* Desliza para a posição */
+    transform: translateY(0);
     opacity: 1;
 }
 
@@ -52,19 +51,19 @@
 
 .modal-header h2 {
     margin: 0;
-    color: var(--primary-color);
+    color: var(--text-light); /* Título do modal mais claro */
     font-size: var(--font-size-large);
     font-weight: 700;
 }
 
 .close-button {
-    color: var(--text-muted); /* Cor mais sutil */
-    font-size: 2rem; /* Um pouco maior */
+    color: var(--text-muted);
+    font-size: var(--font-size-xxl); /* Um pouco maior */
     font-weight: bold;
     cursor: pointer;
     background: none;
     border: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-speed) var(--transition-timing);
 }
 
 .close-button:hover,
@@ -74,13 +73,13 @@
 }
 
 .modal-body {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
     padding-top: var(--spacing-md);
     border-top: 1px solid var(--border-color);
 }
