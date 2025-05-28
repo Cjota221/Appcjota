@@ -1,12 +1,26 @@
-/* ... (Manter estilos existentes do form-group, form-actions) */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
 
+.form-group label {
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    margin-top: var(--spacing-md);
+}
+
+/* Upload de imagem */
 .image-upload-preview {
     width: 180px; /* Um pouco maior */
     height: 180px;
     border: 2px dashed var(--border-color);
     border-radius: var(--border-radius-md);
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Para alinhar ícone e texto */
     justify-content: center;
     align-items: center;
     overflow: hidden;
@@ -14,6 +28,7 @@
     background-color: #222; /* Fundo levemente diferente para contraste */
     cursor: pointer; /* Indica que é clicável */
     transition: border-color 0.2s ease, background-color 0.2s ease;
+    position: relative; /* Para posicionamento do ícone */
 }
 
 .image-upload-preview:hover {
@@ -32,20 +47,26 @@
     font-size: 0.9rem;
     text-align: center;
     padding: var(--spacing-sm);
+    position: absolute;
+    z-index: 1; /* Para ficar acima do ícone quando a imagem está vazia */
 }
 
-/* Opcional: Adicionar ícone de câmera */
+/* Adicionar ícone de câmera */
 .image-upload-preview::before {
     content: '📷'; /* Ícone de câmera */
     font-size: 3rem;
     color: var(--text-muted);
     margin-bottom: var(--spacing-sm);
     display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
 }
 
-.image-upload-preview img + span {
-    display: none; /* Esconder o texto quando a imagem estiver presente */
-}
+/* Esconder o ícone e o texto quando a imagem estiver presente */
+.image-upload-preview img + span,
 .image-upload-preview img + .image-upload-preview::before {
     display: none;
 }
