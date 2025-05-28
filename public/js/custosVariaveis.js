@@ -1,111 +1,124 @@
+// js/custosVariaveis.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (App.currentPage !== 'custos-variaveis.html') return;
-
-    const formCustoVariavel = document.getElementById('formAdicionarCustoVariavel');
-    const tabelaCustosVariaveisBody = document.querySelector('#tabelaCustosVariaveis tbody');
-    const custoVariavelIdInput = document.getElementById('custoVariavelId');
-    const descricaoCustoVariavelInput = document.getElementById('descricaoCustoVariavel');
-    const valorCustoVariavelInput = document.getElementById('valorCustoVariavel');
-    const btnCancelarEdicao = document.getElementById('btnCancelarEdicaoCustoVariavel');
-    const totalCustosVariaveisElement = document.getElementById('totalCustosVariaveis');
-
-    let custosVariaveis = Storage.getItems('custosVariaveis') || [];
-
-    const renderCustosVariaveis = () => {
-        tabelaCustosVariaveisBody.innerHTML = '';
-        let totalGeralPorUnidade = 0;
-        if (custosVariaveis.length === 0) {
-            tabelaCustosVariaveisBody.innerHTML = `<tr><td colspan="4" class="no-data-message">Nenhum custo variável cadastrado.</td></tr>`;
-        } else {
-            custosVariaveis.sort((a,b) => a.descricao.localeCompare(b.descricao)).forEach(custo => {
-                const valorPorUnidade = App.parseFloatStrict(custo.valorPorUnidade);
-                totalGeralPorUnidade += valorPorUnidade;
-                const row = tabelaCustosVariaveisBody.insertRow();
-                row.innerHTML = `
-                    <td>${custo.id.substring(0,8)}...</td>
-                    <td>${custo.descricao}</td>
-                    <td>${App.formatCurrency(valorPorUnidade)}</td>
-                    <td class="actions">
-                        <button class="btn btn-sm btn-secondary btn-editar" data-id="${custo.id}" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                        <button class="btn btn-sm btn-danger btn-excluir" data-id="${custo.id}" title="Excluir"><i class="fas fa-trash"></i> Excluir</button>
-                    </td>
-                `;
-            });
-        }
-        totalCustosVariaveisElement.textContent = App.formatCurrency(totalGeralPorUnidade);
-        addEventListenersAcoes();
-    };
-
-    const addEventListenersAcoes = () => {
-        document.querySelectorAll('#tabelaCustosVariaveis .btn-editar').forEach(button => {
-            button.addEventListener('click', (e) => handleEditar(e.currentTarget.dataset.id));
-        });
-        document.querySelectorAll('#tabelaCustosVariaveis .btn-excluir').forEach(button => {
-            button.addEventListener('click', (e) => handleExcluir(e.currentTarget.dataset.id));
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const id = custoVariavelIdInput.value;
-        const descricao = descricaoCustoVariavelInput.value.trim();
-        const valorPorUnidade = App.parseFloatStrict(valorCustoVariavelInput.value);
-
-        if (!descricao || isNaN(valorPorUnidade) || valorPorUnidade < 0) { // Permite 0 para itens como "imposto sobre venda" que pode ser %
-            App.showNotification('Descrição e valor válido são obrigatórios.', 'error');
-            return;
-        }
-
-        if (id) { // Editando
-            const index = custosVariaveis.findIndex(cv => cv.id === id);
-            if (index > -1) {
-                custosVariaveis[index] = { ...custosVariaveis[index], descricao, valorPorUnidade };
-                App.showNotification('Custo variável atualizado!', 'success');
+    if (document.querySelector('#custos-variaveis-page')) { // Adicione um ID ao body do custos-variaveis.html
+        loadCustosVariaveis();
+        document.getElementById('custoVariavelForm').addEventListener('submit', handleCustoVariavelSubmit);
+        document.getElementById('custoVariavelModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
+                closeModal('custoVariavelModal');
             }
-        } else { // Adicionando
-            const novoCusto = { id: Storage.generateUUID(), descricao, valorPorUnidade };
-            custosVariaveis.push(novoCusto);
-            App.showNotification('Custo variável adicionado!', 'success');
-        }
-        
-        Storage.saveItems('custosVariaveis', custosVariaveis);
-        resetForm();
-        renderCustosVariaveis();
-    };
-
-    const handleEditar = (id) => {
-        const custo = custosVariaveis.find(cv => cv.id === id);
-        if (custo) {
-            custoVariavelIdInput.value = custo.id;
-            descricaoCustoVariavelInput.value = custo.descricao;
-            valorCustoVariavelInput.value = App.formatCurrency(custo.valorPorUnidade, false).replace('.',',');
-            formCustoVariavel.querySelector('button[type="submit"]').textContent = 'Salvar Alterações';
-            btnCancelarEdicao.style.display = 'inline-block';
-            descricaoCustoVariavelInput.focus();
-            window.scrollTo(0,0);
-        }
-    };
-
-    const handleExcluir = (id) => {
-         const custo = custosVariaveis.find(cv => cv.id === id);
-        if (confirm(`Tem certeza que deseja excluir o custo variável "${custo?.descricao || id}"?`)) {
-            custosVariaveis = custosVariaveis.filter(cv => cv.id !== id);
-            Storage.saveItems('custosVariaveis', custosVariaveis);
-            renderCustosVariaveis();
-            App.showNotification('Custo variável excluído!', 'success');
-            if (custoVariavelIdInput.value === id) resetForm();
-        }
-    };
-
-    const resetForm = () => {
-        formCustoVariavel.reset();
-        custoVariavelIdInput.value = '';
-        formCustoVariavel.querySelector('button[type="submit"]').textContent = 'Adicionar Custo Variável';
-        btnCancelarEdicao.style.display = 'none';
-    };
-
-    formCustoVariavel.addEventListener('submit', handleSubmit);
-    btnCancelarEdicao.addEventListener('click', resetForm);
-
-    renderCustosVariaveis();
+        });
+        document.getElementById('openAddCustoVariavelModal').addEventListener('click', () => openModal('custoVariavelModal'));
+    }
 });
+
+function loadCustosVariaveis() {
+    const custosVariaveis = Storage.load('custosVariaveis');
+    const custosVariaveisList = document.getElementById('custosVariaveisList');
+    custosVariaveisList.innerHTML = '';
+
+    if (custosVariaveis.length === 0) {
+        custosVariaveisList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum custo variável cadastrado.</td></tr>';
+        return;
+    }
+
+    let totalPorUnidade = 0;
+
+    custosVariaveis.forEach(custo => {
+        totalPorUnidade += parseFloat(custo.valor);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${custo.nome}</td>
+            <td>${parseFloat(custo.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+            <td class="actions">
+                <button class="btn btn-info edit-btn" data-id="${custo.id}">Editar</button>
+                <button class="btn btn-danger delete-btn" data-id="${custo.id}">Excluir</button>
+            </td>
+        `;
+        custosVariaveisList.appendChild(row);
+    });
+
+    document.getElementById('totalCustosVariaveisPorUnidade').textContent = totalPorUnidade.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', (e) => editCustoVariavel(e.target.dataset.id));
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => deleteCustoVariavel(e.target.dataset.id));
+    });
+}
+
+function handleCustoVariavelSubmit(event) {
+    event.preventDefault();
+
+    const custoVariavelId = document.getElementById('custoVariavelId').value;
+    const nome = document.getElementById('custoVariavelNome').value;
+    const valor = document.getElementById('valorCustoVariavel').value;
+
+    if (!nome || !valor) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    const newCustoVariavel = {
+        id: custoVariavelId || Storage.generateId(),
+        nome: nome,
+        valor: parseFloat(valor)
+    };
+
+    let success;
+    if (custoVariavelId) {
+        success = Storage.update('custosVariaveis', custoVariavelId, newCustoVariavel);
+    } else {
+        success = Storage.add('custosVariaveis', newCustoVariavel);
+    }
+
+    if (success) {
+        alert(`Custo Variável ${custoVariavelId ? 'atualizado' : 'cadastrado'} com sucesso!`);
+        closeModal('custoVariavelModal');
+        clearCustoVariavelForm();
+        loadCustosVariaveis();
+    } else {
+        alert('Falha ao salvar o custo variável.');
+    }
+}
+
+function editCustoVariavel(id) {
+    const custoVariavel = Storage.getById('custosVariaveis', id);
+    if (custoVariavel) {
+        document.getElementById('custoVariavelId').value = custoVariavel.id;
+        document.getElementById('custoVariavelNome').value = custoVariavel.nome;
+        document.getElementById('valorCustoVariavel').value = custoVariavel.valor;
+        document.getElementById('modalTitle').textContent = 'Editar Custo Variável';
+        openModal('custoVariavelModal');
+    }
+}
+
+function deleteCustoVariavel(id) {
+    if (confirm('Tem certeza que deseja excluir este custo variável?')) {
+        if (Storage.remove('custosVariaveis', id)) {
+            alert('Custo Variável excluído com sucesso!');
+            loadCustosVariaveis();
+        } else {
+            alert('Falha ao excluir o custo variável.');
+        }
+    }
+}
+
+function clearCustoVariavelForm() {
+    document.getElementById('custoVariavelForm').reset();
+    document.getElementById('custoVariavelId').value = '';
+    document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Variável';
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    clearCustoVariavelForm();
+}
