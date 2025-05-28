@@ -3,99 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custos Variáveis - AppCJ</title>
+    <title>AppCJ - Custos Variáveis</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/tables.css">
 </head>
-<body>
-    <aside class="app-sidebar">
-        <div class="sidebar-header">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
-                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
-                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
-                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
-                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
-                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
-                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
-                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
-                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
-
-    <header class="app-header">
-         <div class="logo-header-container">
-            <span class="logo-text">AppCJ</span>
-        </div>
-        <div class="header-title">
-            <h1>Custos Variáveis por Unidade</h1>
-        </div>
-        <div></div>
-    </header>
-
-    <main class="main-content">
-        <div class="container">
-            <section id="custos-variaveis-management">
+<body id="custos-variaveis-page">
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
+                <h3>AppCJ</h3>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-item">Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item">Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item active">Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item">Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>Custos Variáveis</h1>
+                <div class="user-info"></div>
+            </header>
+            <section class="content-area">
                 <div class="card">
-                    <div class="card-header primary">
-                        <h3 class="text-white" id="formCustoVariavelTitle">Adicionar Novo Custo Variável</h3>
+                    <div class="card-header">
+                        <h2>Custos Variáveis por Unidade</h2>
+                        <button class="btn btn-primary" id="openAddCustoVariavelModal">Adicionar Novo Custo Variável</button>
                     </div>
-                    <div class="card-body">
-                        <form id="formAdicionarCustoVariavel">
-                            <input type="hidden" id="custoVariavelId">
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 2;">
-                                    <label for="descricaoCustoVariavel">Descrição do Custo:</label>
-                                    <input type="text" id="descricaoCustoVariavel" class="form-control" required>
-                                </div>
-                                <div class="form-group" style="flex: 1;">
-                                    <label for="valorCustoVariavel">Valor por Unidade (R$):</label>
-                                     <div class="input-group">
-                                        <span class="input-group-prepend"><span class="input-group-text">R$</span></span>
-                                        <input type="text" id="valorCustoVariavel" class="form-control" placeholder="0,00" required pattern="^\d*([,.]\d{1,2})?$">
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="btn-group">
-                                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Adicionar Custo Variável</button>
-                                <button type="button" id="btnCancelarEdicaoCustoVariavel" class="btn btn-light" style="display:none;"><i class="fas fa-times"></i> Cancelar Edição</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3><i class="fas fa-list-ul"></i> Lista de Custos Variáveis</h3>
-                        <h4 class="mb-0">Total por Unidade: <strong id="totalCustosVariaveis" class="text-primary">R$ 0,00</strong></h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-wrapper">
-                            <table id="tabelaCustosVariaveis" class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Descrição</th>
-                                        <th>Valor/Unidade</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Custo</th>
+                                <th>Valor por Unidade (R$)</th>
+                                <th class="actions-column">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="custosVariaveisList">
+                            </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="1"><strong>Total por Unidade:</strong></td>
+                                <td id="totalCustosVariaveisPorUnidade">R$ 0,00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </section>
-            <div id="notification-area"></div>
+        </main>
+    </div>
+
+    <div id="custoVariavelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Adicionar Novo Custo Variável</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="custoVariavelForm">
+                    <input type="hidden" id="custoVariavelId">
+                    <div class="form-group">
+                        <label for="custoVariavelNome">Nome do Custo:</label>
+                        <input type="text" id="custoVariavelNome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valorCustoVariavel">Valor por Unidade (R$):</label>
+                        <input type="number" id="valorCustoVariavel" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary close-button">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </main>
+    </div>
 
     <script src="js/storage.js"></script>
     <script src="js/app.js"></script>
