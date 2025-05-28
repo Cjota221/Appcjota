@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
@@ -22,19 +23,18 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
-                <h3>AppCJ</h3>
-            </div>
+                <h3>App.CJ</h3> </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="index.html" class="nav-item active">Dashboard</a></li>
-                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
-                    <li><a href="modelos.html" class="nav-item">Modelos</a></li>
-                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
-                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
-                    <li><a href="producao.html" class="nav-item">Produção</a></li>
-                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
-                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
-                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                    <li><a href="index.html" class="nav-item active"><span class="icon">🏠</span> Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item"><span class="icon">📦</span> Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item"><span class="icon">👟</span> Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item"><span class="icon">⚙️</span> Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item"><span class="icon">📊</span> Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item"><span class="icon">🏭</span> Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item"><span class="icon">📦</span> Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item"><span class="icon">💰</span> Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item"><span class="icon">📄</span> Relatórios</a></li>
                 </ul>
             </nav>
         </aside>
@@ -69,6 +69,104 @@
                     <h3>Produção Recente</h3>
                     <canvas id="producaoChart"></canvas>
                 </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Resumo de Custo por Modelo</h2>
+                    </div>
+                    <div class="modelos-grid" id="dashboardModelosList">
+                        <div class="card modelo-card">
+                            <div class="modelo-card-header">
+                                <img src="assets/img/tenis.png" alt="Tênis de Corrida" class="modelo-thumb">
+                                <h3>Tênis de Corrida</h3>
+                            </div>
+                            <div class="modelo-card-body">
+                                <p><strong>Custo Unitário:</strong> R$ 80,00</p>
+                                <p><strong>Preço Sugerido:</strong> R$ 120,00</p>
+                            </div>
+                            <div class="modelo-card-actions">
+                                <a href="modelos.html" class="btn btn-secondary">Ver Detalhes</a>
+                            </div>
+                        </div>
+                        <div class="card modelo-card">
+                            <div class="modelo-card-header">
+                                <img src="assets/img/oxford.png" alt="Oxford Casual" class="modelo-thumb">
+                                <h3>Oxford Casual</h3>
+                            </div>
+                            <div class="modelo-card-body">
+                                <p><strong>Custo Unitário:</strong> R$ 63,00</p>
+                                <p><strong>Preço Sugerido:</strong> R$ 120,00</p>
+                            </div>
+                            <div class="modelo-card-actions">
+                                <a href="modelos.html" class="btn btn-secondary">Ver Detalhes</a>
+                            </div>
+                        </div>
+                        <div class="card modelo-card">
+                            <div class="modelo-card-header">
+                                <img src="assets/img/sandalia.png" alt="Sandália" class="modelo-thumb">
+                                <h3>Sandália</h3>
+                            </div>
+                            <div class="modelo-card-body">
+                                <p><strong>Custo Unitário:</strong> R$ 80,00</p>
+                                <p><strong>Preço Sugerido:</strong> R$ 120,00</p>
+                            </div>
+                            <div class="modelo-card-actions">
+                                <a href="modelos.html" class="btn btn-secondary">Ver Detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Resumo de Produção</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Quantidade</th>
+                                <th>Custo Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Modelo">Tênis de Corrida</td>
+                                <td data-label="Quantidade">100</td>
+                                <td data-label="Custo Total">R$ 3.500,00</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Modelo">Oxford Casual</td>
+                                <td data-label="Quantidade">50</td>
+                                <td data-label="Custo Total">R$ 1.800,00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Resumo de Consumo de Insumos</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Insumo</th>
+                                <th>Quantidade Consumida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Nome do Insumo">Couro</td>
+                                <td data-label="Quantidade Consumida">120 m</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Nome do Insumo">Borracha</td>
+                                <td data-label="Quantidade Consumida">80 m</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </section>
         </main>
     </div>
