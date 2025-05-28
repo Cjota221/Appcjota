@@ -1,54 +1,60 @@
-.table-wrapper {
-    overflow-x: auto;
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: var(--spacing-md);
+}
+
+.data-table th,
+.data-table td {
+    padding: var(--spacing-sm);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    background-color: var(--white-color);
+    text-align: left;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.data-table th {
+    background-color: var(--primary-color);
+    color: var(--background-dark);
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-table th,
-table td {
-  padding: var(--spacing-md);
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-  font-size: var(--font-size-sm);
+.data-table tbody tr:nth-child(even) {
+    background-color: #333; /* Linhas pares com um fundo ligeiramente diferente */
 }
 
-table th {
-  background-color: var(--gray-light-color);
-  color: var(--text-color);
-  font-weight: 600;
-  white-space: nowrap;
-  text-transform: uppercase;
-  font-size: calc(var(--font-size-sm) * 0.9);
-  letter-spacing: 0.5px;
+.data-table tbody tr:hover {
+    background-color: #444; /* Efeito hover nas linhas */
 }
 
-table tr:last-child td {
-  border-bottom: none;
+.data-table .actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    justify-content: center;
 }
 
-table tbody tr:hover {
-  background-color: #f9f9f9;
+.data-table .actions button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease;
 }
 
-table td .actions .btn {
-    margin-right: var(--spacing-xs);
-    padding: calc(var(--spacing-xs)*1.2) var(--spacing-sm); /* Botões menores */
-}
-table td .actions .btn:last-child {
-    margin-right: 0;
+.data-table .actions .edit-btn {
+    background-color: var(--info-color);
+    color: white;
 }
 
-.no-data-message {
-    text-align: center;
-    padding: var(--spacing-lg);
-    color: var(--gray-dark-color);
-    font-style: italic;
+.data-table .actions .edit-btn:hover {
+    background-color: #117a8b;
+}
+
+.data-table .actions .delete-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.data-table .actions .delete-btn:hover {
+    background-color: #bd2130;
 }
