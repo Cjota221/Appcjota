@@ -1,9 +1,9 @@
 .form-group {
-    margin-bottom: var(--spacing-lg); /* Mais espaçamento entre grupos de formulário */
+    margin-bottom: var(--spacing-lg);
 }
 
 .form-group label {
-    margin-bottom: var(--spacing-sm); /* Mais espaço entre label e input */
+    margin-bottom: var(--spacing-sm);
     font-weight: 600;
     color: var(--text-light);
     font-size: var(--font-size-small);
@@ -13,22 +13,22 @@
     display: flex;
     gap: var(--spacing-md);
     justify-content: flex-end;
-    margin-top: var(--spacing-xxl); /* Mais espaço acima dos botões de ação */
+    margin-top: var(--spacing-xxl);
 }
 
 /* Upload de imagem */
 .image-upload-preview {
-    width: 200px; /* Mais visível */
+    width: 200px;
     height: 200px;
     border: 2px dashed var(--border-color);
-    border-radius: var(--border-radius-lg); /* Mais arredondado */
+    border-radius: var(--border-radius-lg);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     margin-bottom: var(--spacing-md);
-    background-color: var(--surface-light); /* Mais claro para indicar interatividade */
+    background-color: var(--surface-light);
     cursor: pointer;
     transition: border-color var(--transition-speed) var(--transition-timing),
                 background-color var(--transition-speed) var(--transition-timing);
@@ -37,7 +37,7 @@
 
 .image-upload-preview:hover {
     border-color: var(--primary-color);
-    background-color: rgba(var(--primary-color), 0.1); /* Brilho no hover */
+    background-color: rgba(var(--primary-color), 0.1);
 }
 
 .image-upload-preview img {
@@ -57,8 +57,8 @@
 
 /* Ícone de câmera */
 .image-upload-preview::before {
-    content: '📸'; /* Emoji de câmera é mais amigável */
-    font-size: 3.5rem; /* Um pouco maior */
+    content: '📸';
+    font-size: 3.5rem;
     color: var(--text-muted);
     position: absolute;
     top: 50%;
