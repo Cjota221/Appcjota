@@ -1,37 +1,64 @@
 .card {
-    background-color: var(--card-background);
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-md);
+    background-color: var(--surface-dark); /* Nova cor */
+    border-radius: var(--border-radius-lg); /* Mais arredondado */
+    padding: var(--spacing-xl); /* Mais padding interno */
     margin-bottom: var(--spacing-lg);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-md); /* Sombra mais sutil */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-color); /* Borda sutil */
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px); /* Efeito de elevação mais perceptível */
+    box-shadow: var(--shadow-lg); /* Sombra ao hover */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+    margin-bottom: 0; /* Remover margem extra */
+    font-size: var(--font-size-large);
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Minmax para melhor adaptação */
+    gap: var(--spacing-xl); /* Mais espaçamento entre os cards */
     margin-bottom: var(--spacing-lg);
 }
 
 .summary-card {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .summary-card p {
-    font-size: 2.5rem;
-    font-weight: bold;
+    font-size: 2.8rem; /* Um pouco maior */
+    font-weight: 700;
     color: var(--secondary-color);
     margin-top: var(--spacing-sm);
+    margin-bottom: 0;
+}
+
+.summary-card h3 {
+    font-size: 1.1rem;
+    color: var(--text-muted); /* Cor mais suave para o título */
+    font-weight: 500;
+    margin-bottom: var(--spacing-sm);
 }
 
 .chart-card {
-    min-height: 300px; /* Garante altura mínima para o gráfico */
+    min-height: 350px; /* Garante altura mínima para o gráfico */
     display: flex;
     flex-direction: column;
     justify-content: center;
