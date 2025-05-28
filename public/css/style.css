@@ -1,42 +1,41 @@
 /* Resets básicos */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-body {
-    /* As propriedades de body já estão no layout.css para evitar duplicação */
-    margin: 0;
-    font-family: var(--font-family-primary);
-    background-color: var(--background-dark);
-    color: var(--text-light);
-    line-height: 1.6;
+/* Propriedades globais (já definidas em layout.css para body, mas para referência) */
+html, body {
+    height: 100%; /* Importante para o degradê e min-height */
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-light);
-    margin-top: 0;
     margin-bottom: var(--spacing-md);
-    font-weight: 700; /* Mais peso para títulos */
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-h1 { font-size: 2.2rem; }
-h2 { font-size: 1.8rem; }
-h3 { font-size: 1.4rem; }
-h4 { font-size: 1.2rem; }
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-large); }
+h4 { font-size: var(--font-size-base); } /* H4 para títulos de cards, mais contido */
+
 
 p {
     margin-bottom: var(--spacing-sm);
-    color: var(--text-light); /* Garantir cor */
+    color: var(--text-light);
 }
 
 a {
     color: var(--primary-color);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-speed) var(--transition-timing);
 }
 
 a:hover {
-    color: var(--secondary-color); /* Efeito de hover diferente */
+    color: var(--secondary-color);
     text-decoration: underline;
 }
 
@@ -49,14 +48,15 @@ input[type="date"],
 select,
 textarea {
     width: 100%;
-    padding: var(--spacing-md); /* Mais padding */
+    padding: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md); /* Mais arredondado */
-    background-color: var(--surface-dark); /* Cor de fundo do card/modal */
+    border-radius: var(--border-radius-md);
+    background-color: var(--surface-light); /* Mais claro que o card para input */
     color: var(--text-light);
     font-size: var(--font-size-base);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition-speed) var(--transition-timing),
+                box-shadow var(--transition-speed) var(--transition-timing);
 }
 
 input[type="text"]:focus,
@@ -68,15 +68,15 @@ select:focus,
 textarea:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(220, 46, 218, 0.3); /* Sombra de foco mais visível */
+    box-shadow: 0 0 0 3px rgba(220, 46, 218, 0.3);
 }
 
 label {
     display: block;
     margin-bottom: var(--spacing-xs);
-    font-weight: 600; /* Mais peso */
+    font-weight: 600;
     color: var(--text-light);
-    font-size: var(--font-size-small); /* Um pouco menor para labels */
+    font-size: var(--font-size-small);
 }
 
 /* Utilitários */
@@ -95,7 +95,7 @@ label {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--surface-dark); /* Cor da trilha do scrollbar */
+    background: var(--surface-dark);
 }
 
 ::-webkit-scrollbar-thumb {
