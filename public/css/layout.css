@@ -3,52 +3,55 @@ body {
     font-family: var(--font-family-primary);
     background-color: var(--background-dark);
     color: var(--text-light);
-    display: flex; /* Para centralizar o app-container */
+    display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
+    font-size: var(--font-size-base); /* Definindo o tamanho base */
+    line-height: 1.6;
 }
 
 .app-container {
     display: flex;
     width: 100%;
-    max-width: 1600px; /* Limite a largura máxima para telas grandes */
+    max-width: 1600px;
     min-height: 100vh;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    background-color: var(--background-dark); /* Fundo do container */
+    box-shadow: var(--shadow-lg); /* Sombra mais destacada no container geral */
+    background-color: var(--background-dark);
 }
 
 .sidebar {
-    width: 250px;
-    background-color: #222; /* Um pouco mais escuro para o sidebar */
-    padding: var(--spacing-md);
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    width: 280px; /* Ligeiramente mais largo */
+    background-color: var(--surface-dark);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md); /* Sombra mais sutil */
     display: flex;
     flex-direction: column;
-    position: sticky; /* Sidebar fixo */
+    position: sticky;
     top: 0;
     height: 100vh;
-    overflow-y: auto; /* Para rolagem se o conteúdo for grande */
-    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    transition: transform 0.3s ease-out, width 0.3s ease-out; /* Transição para width também */
     transform: translateX(0);
-    z-index: 1000; /* Garante que o sidebar fique acima do conteúdo */
+    z-index: 1000;
+    border-right: 1px solid var(--border-color); /* Borda sutil */
 }
 
 .sidebar.hidden {
     transform: translateX(-100%);
-    position: absolute; /* Para não ocupar espaço quando escondido */
+    position: absolute;
 }
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl); /* Mais espaçamento */
     padding-bottom: var(--spacing-md);
     border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-header .logo {
-    width: 80px;
-    height: 80px;
+    width: 70px; /* Um pouco menor */
+    height: 70px;
     object-fit: contain;
     margin-bottom: var(--spacing-sm);
 }
@@ -56,6 +59,8 @@ body {
 .sidebar-header h3 {
     margin: 0;
     color: var(--primary-color);
+    font-size: var(--font-size-large); /* Tamanho de fonte consistente */
+    font-weight: 600;
 }
 
 .main-nav ul {
@@ -69,18 +74,27 @@ body {
 }
 
 .main-nav a {
-    display: block;
-    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg); /* Mais padding */
     color: var(--text-light);
     text-decoration: none;
-    border-radius: var(--border-radius-sm);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: var(--border-radius-md); /* Bordas mais arredondadas */
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    font-weight: 500;
 }
 
-.main-nav a:hover,
+.main-nav a:hover {
+    background-color: rgba(220, 46, 218, 0.1); /* Um hover mais suave da cor primária */
+    color: var(--primary-color);
+    transform: translateX(3px); /* Pequena animação */
+}
+
 .main-nav a.active {
     background-color: var(--primary-color);
     color: var(--background-dark);
+    box-shadow: var(--shadow-sm); /* Sombra para o item ativo */
 }
 
 .main-content {
@@ -90,21 +104,23 @@ body {
 }
 
 .header {
-    background-color: #222; /* Mesma cor do sidebar */
-    padding: var(--spacing-md);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    background-color: var(--surface-dark); /* Mesma cor dos cards */
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky; /* Header fixo */
+    position: sticky;
     top: 0;
     z-index: 999;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header h1 {
     margin: 0;
     color: var(--text-light);
-    font-size: 1.5rem;
+    font-size: var(--font-size-large);
+    font-weight: 700;
 }
 
 .menu-toggle {
@@ -113,24 +129,32 @@ body {
     color: var(--text-light);
     font-size: 1.8rem;
     cursor: pointer;
-    display: none; /* Escondido por padrão em desktop */
+    display: none;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    transition: background-color 0.2s ease;
+}
+
+.menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .content-area {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-xl); /* Mais padding geral */
     flex-grow: 1;
-    overflow-y: auto; /* Para rolagem se o conteúdo for grande */
+    overflow-y: auto;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column;
+        box-shadow: none; /* Remover sombra em mobile para ocupar toda a largura */
     }
 
     .sidebar {
         position: fixed;
-        width: 200px;
+        width: 250px; /* Ajuste para mobile */
         height: 100%;
         transform: translateX(-100%);
         box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
@@ -141,24 +165,30 @@ body {
     }
 
     .menu-toggle {
-        display: block; /* Visível em telas menores */
+        display: block;
     }
 
     .main-content {
-        margin-left: 0; /* Remove margem quando o sidebar está sobreposto */
+        margin-left: 0;
     }
 
     .header {
-        padding-left: calc(var(--spacing-md) + 40px); /* Espaço para o botão do menu */
+        padding-left: var(--spacing-md); /* Ajuste */
+        justify-content: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .header h1 {
+        font-size: 1.3rem;
     }
 }
 
 @media (max-width: 480px) {
-    .header h1 {
-        font-size: 1.2rem;
+    .content-area {
+        padding: var(--spacing-md); /* Menos padding em telas muito pequenas */
     }
 
-    .content-area {
-        padding: var(--spacing-md);
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Forçar uma única coluna */
     }
 }
