@@ -1,133 +1,148 @@
+// js/relatorios.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (App.currentPage !== 'relatorios.html') return;
-
-    const relatorioCustoModeloDiv = document.getElementById('relatorioCustoPorModelo');
-    const relatorioCustoProducaoDiv = document.getElementById('relatorioCustoProducao');
-    const relatorioConsumoInsumosDiv = document.getElementById('relatorioConsumoInsumos');
-
-    const modelos = Storage.getItems('modelos') || [];
-    const insumos = Storage.getItems('insumos') || [];
-    const producoes = Storage.getItems('producoes') || [];
-    const custosFixos = Storage.getItems('custosFixos') || [];
-    const custosVariaveis = Storage.getItems('custosVariaveis') || [];
-    const configuracoes = Storage.getItems('configuracoes') || {};
-    const volumeEstimado = App.parseFloatStrict(configuracoes.volumeProducaoMensalEstimado) || 1;
-
-    // 1. Relatório de Custo por Modelo
-    function gerarRelatorioCustoPorModelo() {
-        let html = '<h4>Custo de Insumos por Modelo</h4>';
-        if (modelos.length === 0) {
-            html += '<p class="no-data-message">Nenhum modelo cadastrado.</p>';
-            relatorioCustoModeloDiv.innerHTML = html;
-            return;
-        }
-        html += '<ul class="list-group">';
-        modelos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(modelo => {
-            const custoInsumos = Calculadora.calcularCustoInsumosModelo(modelo, insumos);
-            html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${modelo.nome}
-                        <span class="badge bg-primary rounded-pill">${App.formatCurrency(custoInsumos)}</span>
-                     </li>`;
-        });
-        html += '</ul>';
-        relatorioCustoModeloDiv.innerHTML = html;
+    if (document.querySelector('#relatorios-page')) { // Adicione um ID ao body do relatorios.html
+        renderCustoPorModeloChart();
+        renderConsumoInsumosChart();
+        document.getElementById('exportDataBtn').addEventListener('click', Storage.exportData);
+        document.getElementById('importDataInput').addEventListener('change', handleImportData);
     }
-
-    // 2. Relatório de Custo da Produção (Resumo por Produção)
-    function gerarRelatorioCustoProducao() {
-        let html = '<h4>Resumo de Custos por Lançamento de Produção</h4>';
-        if (producoes.length === 0) {
-            html += '<p class="no-data-message">Nenhuma produção lançada.</p>';
-            relatorioCustoProducaoDiv.innerHTML = html;
-            return;
-        }
-        html += `<div class="table-wrapper"><table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Modelo</th>
-                            <th>Qtd.</th>
-                            <th>Custo Total Produção</th>
-                            <th>Custo Unit.</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-        producoes.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(prod => {
-            const nomeModelo = modelos.find(m => m.id === prod.modeloId)?.nome || 'N/A';
-            html += `<tr>
-                        <td>${new Date(prod.data).toLocaleDateString('pt-BR')}</td>
-                        <td>${nomeModelo}</td>
-                        <td>${prod.quantidade}</td>
-                        <td>${App.formatCurrency(prod.custoTotalProducao)}</td>
-                        <td>${App.formatCurrency(prod.custoUnitarioProducao)}</td>
-                     </tr>`;
-        });
-        html += '</tbody></table></div>';
-        relatorioCustoProducaoDiv.innerHTML = html;
-    }
-
-    // 3. Relatório de Consumo de Insumos (Agregado de todas as produções)
-    function gerarRelatorioConsumoInsumos() {
-        let html = '<h4>Consumo Agregado de Insumos (Todas Produções)</h4>';
-        if (producoes.length === 0) {
-            html += '<p class="no-data-message">Nenhuma produção lançada para calcular o consumo.</p>';
-            relatorioConsumoInsumosDiv.innerHTML = html;
-            return;
-        }
-
-        const consumoAgregado = {}; // { insumoId: { nome, unidade, quantidadeTotal, custoTotal } }
-
-        producoes.forEach(prod => {
-            if(prod.insumosConsumidos && Array.isArray(prod.insumosConsumidos)){
-                prod.insumosConsumidos.forEach(itemConsumido => {
-                    const insumoDetalhe = insumos.find(i => i.id === itemConsumido.insumoId);
-                    if (insumoDetalhe) {
-                        if (!consumoAgregado[itemConsumido.insumoId]) {
-                            consumoAgregado[itemConsumido.insumoId] = {
-                                nome: insumoDetalhe.nome,
-                                unidade: insumoDetalhe.unidade,
-                                quantidadeTotal: 0,
-                                custoTotal: 0
-                            };
-                        }
-                        consumoAgregado[itemConsumido.insumoId].quantidadeTotal += App.parseFloatStrict(itemConsumido.quantidadeUtilizada);
-                        // O custoTotalInsumo já vem calculado na produção, mas podemos recalcular se necessário
-                        // consumoAgregado[itemConsumido.insumoId].custoTotal += App.parseFloatStrict(itemConsumido.custoTotalInsumo);
-                        // Ou se não tiver custoTotalInsumo, seria:
-                         consumoAgregado[itemConsumido.insumoId].custoTotal += (App.parseFloatStrict(insumoDetalhe.custo) * App.parseFloatStrict(itemConsumido.quantidadeUtilizada));
-                    }
-                });
-            }
-        });
-        
-        if (Object.keys(consumoAgregado).length === 0) {
-             html += '<p class="no-data-message">Nenhum insumo consumido nas produções registradas.</p>';
-        } else {
-            html += `<div class="table-wrapper"><table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Insumo</th>
-                                <th>Unidade</th>
-                                <th>Qtd. Total Consumida</th>
-                                <th>Custo Total Consumido</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-            Object.values(consumoAgregado).sort((a,b) => a.nome.localeCompare(b.nome)).forEach(item => {
-                html += `<tr>
-                            <td>${item.nome}</td>
-                            <td>${item.unidade}</td>
-                            <td>${item.quantidadeTotal.toFixed(2).replace('.',',')}</td>
-                            <td>${App.formatCurrency(item.custoTotal)}</td>
-                         </tr>`;
-            });
-            html += '</tbody></table></div>';
-        }
-        relatorioConsumoInsumosDiv.innerHTML = html;
-    }
-
-    // Gerar todos os relatórios ao carregar a página
-    gerarRelatorioCustoPorModelo();
-    gerarRelatorioCustoProducao();
-    gerarRelatorioConsumoInsumos();
 });
+
+function renderCustoPorModeloChart() {
+    const modelos = Storage.load('modelos');
+    const labels = [];
+    const data = [];
+
+    modelos.forEach(modelo => {
+        const calculo = Calculadora.calculateModelCost(modelo.id);
+        if (calculo) {
+            labels.push(modelo.nome);
+            data.push(calculo.custoTotalUnitario);
+        }
+    });
+
+    const ctx = document.getElementById('custoPorModeloChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Custo Total Unitário (R$)',
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'var(--text-light)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'var(--text-light)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'var(--text-light)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderConsumoInsumosChart() {
+    const insumos = Storage.load('insumos');
+    const producoes = Storage.load('producoes');
+
+    const consumoTotalInsumos = {};
+
+    producoes.forEach(producao => {
+        const summary = Calculadora.calculateProductionSummary(producao.id);
+        if (summary && summary.insumosConsumidos) {
+            for (const insumoId in summary.insumosConsumidos) {
+                consumoTotalInsumos[insumoId] = (consumoTotalInsumos[insumoId] || 0) + summary.insumosConsumidos[insumoId];
+            }
+        }
+    });
+
+    const labels = [];
+    const data = [];
+
+    for (const insumoId in consumoTotalInsumos) {
+        const insumo = insumos.find(i => i.id === insumoId);
+        if (insumo) {
+            labels.push(`${insumo.nome} (${insumo.unidadeMedida})`);
+            data.push(consumoTotalInsumos[insumoId]);
+        }
+    }
+
+    const ctx = document.getElementById('consumoInsumosChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Consumo Total de Insumos',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'var(--text-light)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function handleImportData(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const jsonString = e.target.result;
+            Storage.importData(jsonString);
+        };
+        reader.readAsText(file);
+    }
+}
