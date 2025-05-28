@@ -5,9 +5,8 @@
     padding: 0;
 }
 
-/* Propriedades globais (já definidas em layout.css para body, mas para referência) */
 html, body {
-    height: 100%; /* Importante para o degradê e min-height */
+    height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -20,7 +19,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: var(--font-size-xxl); }
 h2 { font-size: var(--font-size-xl); }
 h3 { font-size: var(--font-size-large); }
-h4 { font-size: var(--font-size-base); } /* H4 para títulos de cards, mais contido */
+h4 { font-size: var(--font-size-base); }
 
 
 p {
@@ -52,7 +51,7 @@ textarea {
     margin-bottom: var(--spacing-md);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    background-color: var(--surface-light); /* Mais claro que o card para input */
+    background-color: var(--surface-light);
     color: var(--text-light);
     font-size: var(--font-size-base);
     transition: border-color var(--transition-speed) var(--transition-timing),
