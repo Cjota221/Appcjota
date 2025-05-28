@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AppCJ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> </head>
+<body>
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text">AppCJ</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="insumos.html"><i class="fas fa-boxes fa-fw"></i> Insumos</a></li>
+                <li><a href="modelos.html"><i class="fas fa-shoe-prints fa-fw"></i> Modelos</a></li>
+                <li><a href="custos-fixos.html"><i class="fas fa-file-invoice-dollar fa-fw"></i> Custos Fixos</a></li>
+                <li><a href="custos-variaveis.html"><i class="fas fa-sliders-h fa-fw"></i> Custos Variáveis</a></li>
+                <li><a href="producao.html"><i class="fas fa-industry fa-fw"></i> Produção</a></li>
+                <li><a href="financeiro.html"><i class="fas fa-calculator fa-fw"></i> Precificação</a></li>
+                <li><a href="estoque.html"><i class="fas fa-warehouse fa-fw"></i> Estoque</a></li>
+                <li><a href="relatorios.html"><i class="fas fa-chart-bar fa-fw"></i> Relatórios</a></li>
+                <li><a href="configuracoes.html"><i class="fas fa-cogs fa-fw"></i> Configurações</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+
+    <header class="app-header">
+         <div class="logo-header-container">
+            <span class="logo-text">AppCJ</span>
+        </div>
+        <div class="header-title">
+            <h1>Dashboard</h1>
+        </div>
+        <div></div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section id="dashboard-content">
+                <h2 class="mb-3">Bem-vindo ao AppCJ!</h2>
+                <p class="mb-3">Sua ferramenta completa para cálculo de custos e precificação.</p>
+                
+                <div class="summary-cards-grid">
+                    <div class="summary-card">
+                        <h4><i class="fas fa-boxes text-primary"></i> Total Insumos</h4>
+                        <p class="value" id="total-insumos">0</p>
+                    </div>
+                    <div class="summary-card secondary-accent">
+                        <h4><i class="fas fa-shoe-prints text-secondary"></i> Total Modelos</h4>
+                        <p class="value" id="total-modelos">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4><i class="fas fa-file-invoice-dollar text-primary"></i> Custo Fixo Mensal</h4>
+                        <p class="value" id="total-custo-fixo">R$ 0,00</p>
+                    </div>
+                     <div class="summary-card secondary-accent">
+                        <h4><i class="fas fa-industry text-secondary"></i> Produções (Mês)</h4>
+                        <p class="value" id="total-producoes-mes">0</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header primary">
+                        <h3 class="text-white"><i class="fas fa-rocket"></i> Acesso Rápido</h3>
+                    </div>
+                    <div class="card-body btn-group">
+                        <a href="insumos.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Cadastrar Insumo</a>
+                        <a href="modelos.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Cadastrar Modelo</a>
+                        <a href="producao.html" class="btn btn-secondary"><i class="fas fa-cogs"></i> Nova Produção</a>
+                    </div>
+                </div>
+                 <div id="notification-area"></div> </section>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+    </body>
+</html>
