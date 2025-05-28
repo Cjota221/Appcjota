@@ -1,25 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppCJ - Modelos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/tables.css">
+    <style>
+        /* Estilos específicos para a página de modelos */
+        .modelos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .modelo-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modelo-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+        }
+
+        .modelo-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .modelo-card-body p {
+            margin-bottom: var(--spacing-xs);
+            font-size: 0.95rem;
+        }
+
+        .modelo-card-actions {
+            margin-top: auto; /* Empurra as ações para o final do card */
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .insumo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .insumo-item span {
+            flex-grow: 1;
+        }
+
+        .insumo-item .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
 <body id="modelos-page">
-    <section class="content-area">
-        <div class="card">
-            <div class="card-header">
-                <h2>Modelos Cadastrados</h2>
-                <button class="btn btn-primary" id="openAddModeloModal">Cadastrar Novo Modelo</button>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
+                <h3>AppCJ</h3>
             </div>
-            <div class="modelos-grid" id="modelosList">
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-item">Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item active">Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item">Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>Modelos</h1>
+                <div class="user-info"></div>
+            </header>
+            <section class="content-area">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Modelos Cadastrados</h2>
+                        <button class="btn btn-primary" id="openAddModeloModal">Cadastrar Novo Modelo</button>
+                    </div>
+                    <div class="modelos-grid" id="modelosList">
+                        </div>
                 </div>
-        </div>
-    </section>
+            </section>
+        </main>
+    </div>
 
     <div id="modeloModal" class="modal">
         <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Cadastrar Novo Modelo</h2>
+                <button class="close-button">&times;</button>
+            </div>
             <div class="modal-body">
                 <form id="modeloForm">
+                    <input type="hidden" id="modeloId">
+                    <input type="hidden" id="modeloImagemBase64">
+
+                    <div class="form-group">
+                        <label for="modeloNome">Nome do Modelo:</label>
+                        <input type="text" id="modeloNome" required>
+                    </div>
+
                     <div class="form-group">
                         <label for="modeloImagem">Imagem do Modelo:</label>
                         <input type="file" id="modeloImagem" accept="image/*">
                         <div class="image-upload-preview" id="imagePreview">
                             <span>Clique ou arraste para adicionar imagem</span>
                         </div>
+                    </div>
+
+                    <h3>Composição de Insumos</h3>
+                    <div class="form-group">
+                        <label for="insumoSelect">Insumo:</label>
+                        <select id="insumoSelect">
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantidadeInsumo">Quantidade Utilizada:</label>
+                        <input type="number" id="quantidadeInsumo" step="0.01" min="0">
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="addInsumoToModelo">Adicionar Insumo</button>
+                    <ul id="modeloInsumosComposicao" style="margin-top: var(--spacing-md); padding: 0; list-style: none;">
+                        </ul>
+
+                    <div class="form-group" style="margin-top: var(--spacing-lg);">
+                        <label for="margemLucro">Margem de Lucro Desejada (%):</label>
+                        <input type="number" id="margemLucro" step="0.1" min="0" max="100" required>
                     </div>
 
                     <div class="card summary-card" style="text-align: left;">
@@ -29,8 +170,18 @@
                         <p><strong>Lucro Estimado por Par:</strong> <span id="lucroEstimadoPorPar">R$ 0,00</span></p>
                     </div>
 
-                    </form>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn btn-secondary close-button">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    </body>
+
+    <script src="js/storage.js"></script>
+    <script src="js/calculadora.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/modelos.js"></script>
+</body>
+</html>
