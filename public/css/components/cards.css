@@ -1,16 +1,17 @@
 .card {
-    background-color: var(--surface-dark); /* Nova cor */
-    border-radius: var(--border-radius-lg); /* Mais arredondado */
+    background-color: var(--surface-dark);
+    border-radius: var(--border-radius-xl); /* Mais arredondado */
     padding: var(--spacing-xl); /* Mais padding interno */
     margin-bottom: var(--spacing-lg);
-    box-shadow: var(--shadow-md); /* Sombra mais sutil */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-medium); /* Sombra mais visível, mas suave */
+    transition: transform var(--transition-speed) var(--transition-timing),
+                box-shadow var(--transition-speed) var(--transition-timing);
     border: 1px solid var(--border-color); /* Borda sutil */
 }
 
 .card:hover {
     transform: translateY(-5px); /* Efeito de elevação mais perceptível */
-    box-shadow: var(--shadow-lg); /* Sombra ao hover */
+    box-shadow: var(--shadow-heavy); /* Sombra ao hover */
 }
 
 .card-header {
@@ -23,15 +24,16 @@
 }
 
 .card-header h2 {
-    margin-bottom: 0; /* Remover margem extra */
+    margin-bottom: 0;
     font-size: var(--font-size-large);
+    font-weight: 700;
 }
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Minmax para melhor adaptação */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--spacing-xl); /* Mais espaçamento entre os cards */
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xxl); /* Mais espaço abaixo da grade */
 }
 
 .summary-card {
@@ -40,27 +42,92 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: var(--spacing-lg); /* Menos padding para cards menores de resumo */
+    min-height: 150px; /* Garante altura mínima para alinhamento */
 }
 
 .summary-card p {
-    font-size: 2.8rem; /* Um pouco maior */
+    font-size: var(--font-size-xxl); /* Um pouco maior e impactante */
     font-weight: 700;
     color: var(--secondary-color);
     margin-top: var(--spacing-sm);
     margin-bottom: 0;
+    line-height: 1; /* Para evitar espaçamento extra em números grandes */
 }
 
 .summary-card h3 {
-    font-size: 1.1rem;
-    color: var(--text-muted); /* Cor mais suave para o título */
+    font-size: var(--font-size-base); /* Menor e mais discreto */
+    color: var(--text-muted);
     font-weight: 500;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs); /* Menos margem inferior */
 }
 
 .chart-card {
-    min-height: 350px; /* Garante altura mínima para o gráfico */
+    min-height: 380px; /* Garante altura mínima para o gráfico */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: var(--spacing-xl);
+}
+
+/* Estilos específicos para cards de modelos (na página de modelos ou resumo no dashboard) */
+.modelo-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-dark);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-medium);
+    overflow: hidden; /* Garante que a imagem não vaze */
+}
+
+.modelo-card-header {
+    display: flex;
+    flex-direction: column; /* Imagem acima do título */
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--surface-light); /* Fundo sutil para o header do card */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modelo-thumb {
+    width: 100%; /* Ocupa a largura total do header */
+    height: 150px; /* Altura fixa para consistência */
+    object-fit: cover; /* Recorta para preencher */
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-md);
+    border: 1px solid rgba(255,255,255,0.05); /* Borda muito suave */
+}
+
+.modelo-card-header h3 {
+    margin: 0;
+    color: var(--text-light);
+    font-size: var(--font-size-large);
+    text-align: center;
+}
+
+.modelo-card-body {
+    padding: var(--spacing-lg);
+    flex-grow: 1; /* Permite que o corpo ocupe o espaço restante */
+}
+
+.modelo-card-body p {
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-small); /* Texto um pouco menor */
+    color: var(--text-muted);
+}
+
+.modelo-card-body p strong {
+    color: var(--text-light); /* Destaque para os valores */
+    font-weight: 600;
+}
+
+.modelo-card-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end; /* Alinha os botões à direita */
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--surface-light); /* Fundo sutil para as ações */
 }
