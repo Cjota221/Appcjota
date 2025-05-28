@@ -29,16 +29,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--surface-light); /* Mais claro */
+            background-color: var(--surface-light);
             padding: var(--spacing-sm);
             margin-bottom: var(--spacing-xs);
             border-radius: var(--border-radius-md);
             border: 1px solid var(--border-color);
+            font-size: var(--font-size-small);
         }
 
         .insumo-item span {
             flex-grow: 1;
-            font-size: var(--font-size-small);
             color: var(--text-light);
         }
 
@@ -106,7 +106,8 @@
 
                     <div class="form-group">
                         <label for="modeloImagem">Imagem do Modelo:</label>
-                        <input type="file" id="modeloImagem" accept="image/*" style="display: none;"> <div class="image-upload-preview" id="imagePreview" onclick="document.getElementById('modeloImagem').click();">
+                        <input type="file" id="modeloImagem" accept="image/*" style="display: none;">
+                        <div class="image-upload-preview" id="imagePreview" onclick="document.getElementById('modeloImagem').click();">
                             <span>Clique ou arraste para adicionar imagem</span>
                         </div>
                     </div>
@@ -130,7 +131,8 @@
                         <input type="number" id="margemLucro" step="0.1" min="0" max="100" required>
                     </div>
 
-                    <div class="card summary-card" style="text-align: left; padding: var(--spacing-lg);"> <h4>Resumo de Custos e Preço</h4>
+                    <div class="card summary-card" style="text-align: left; padding: var(--spacing-lg);">
+                        <h4>Resumo de Custos e Preço</h4>
                         <p><strong>Custo Unitário Total:</strong> <span id="custoUnitarioTotal">R$ 0,00</span></p>
                         <p><strong>Margem de Lucro:</strong> <span id="margemLucroDisplay">0%</span></p>
                         <p><strong>Preço de Venda Sugerido:</strong> <span id="precoVendaSugerido">R$ 0,00</span></p>
