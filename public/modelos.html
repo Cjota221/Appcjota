@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/style.css">
@@ -17,61 +18,28 @@
     <link rel="stylesheet" href="css/components/tables.css">
     <style>
         /* Estilos específicos para a página de modelos */
+        /* Note: Muitos estilos de card-modelo foram movidos para components/cards.css */
         .modelos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: var(--spacing-lg);
         }
 
-        .modelo-card {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modelo-card-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: var(--spacing-sm);
-        }
-
-        .modelo-thumb {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--border-color);
-        }
-
-        .modelo-card-body p {
-            margin-bottom: var(--spacing-xs);
-            font-size: 0.95rem;
-        }
-
-        .modelo-card-actions {
-            margin-top: auto; /* Empurra as ações para o final do card */
-            display: flex;
-            justify-content: flex-end;
-            gap: var(--spacing-sm);
-            padding-top: var(--spacing-md);
-            border-top: 1px solid var(--border-color);
-        }
-
         .insumo-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #333;
+            background-color: var(--surface-light); /* Mais claro */
             padding: var(--spacing-sm);
             margin-bottom: var(--spacing-xs);
-            border-radius: var(--border-radius-sm);
+            border-radius: var(--border-radius-md);
             border: 1px solid var(--border-color);
         }
 
         .insumo-item span {
             flex-grow: 1;
+            font-size: var(--font-size-small);
+            color: var(--text-light);
         }
 
         .insumo-item .btn-sm {
@@ -85,19 +53,19 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <img src="assets/img/logo.png" alt="AppCJ Logo" class="logo">
-                <h3>AppCJ</h3>
+                <h3>App.CJ</h3>
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="index.html" class="nav-item">Dashboard</a></li>
-                    <li><a href="insumos.html" class="nav-item">Insumos</a></li>
-                    <li><a href="modelos.html" class="nav-item active">Modelos</a></li>
-                    <li><a href="custos-fixos.html" class="nav-item">Custos Fixos</a></li>
-                    <li><a href="custos-variaveis.html" class="nav-item">Custos Variáveis</a></li>
-                    <li><a href="producao.html" class="nav-item">Produção</a></li>
-                    <li><a href="estoque.html" class="nav-item">Estoque</a></li>
-                    <li><a href="financeiro.html" class="nav-item">Financeiro</a></li>
-                    <li><a href="relatorios.html" class="nav-item">Relatórios</a></li>
+                    <li><a href="index.html" class="nav-item"><span class="icon">🏠</span> Dashboard</a></li>
+                    <li><a href="insumos.html" class="nav-item"><span class="icon">📦</span> Insumos</a></li>
+                    <li><a href="modelos.html" class="nav-item active"><span class="icon">👟</span> Modelos</a></li>
+                    <li><a href="custos-fixos.html" class="nav-item"><span class="icon">⚙️</span> Custos Fixos</a></li>
+                    <li><a href="custos-variaveis.html" class="nav-item"><span class="icon">📊</span> Custos Variáveis</a></li>
+                    <li><a href="producao.html" class="nav-item"><span class="icon">🏭</span> Produção</a></li>
+                    <li><a href="estoque.html" class="nav-item"><span class="icon">📦</span> Estoque</a></li>
+                    <li><a href="financeiro.html" class="nav-item"><span class="icon">💰</span> Financeiro</a></li>
+                    <li><a href="relatorios.html" class="nav-item"><span class="icon">📄</span> Relatórios</a></li>
                 </ul>
             </nav>
         </aside>
@@ -138,8 +106,7 @@
 
                     <div class="form-group">
                         <label for="modeloImagem">Imagem do Modelo:</label>
-                        <input type="file" id="modeloImagem" accept="image/*">
-                        <div class="image-upload-preview" id="imagePreview">
+                        <input type="file" id="modeloImagem" accept="image/*" style="display: none;"> <div class="image-upload-preview" id="imagePreview" onclick="document.getElementById('modeloImagem').click();">
                             <span>Clique ou arraste para adicionar imagem</span>
                         </div>
                     </div>
@@ -163,10 +130,10 @@
                         <input type="number" id="margemLucro" step="0.1" min="0" max="100" required>
                     </div>
 
-                    <div class="card summary-card" style="text-align: left;">
-                        <h4>Resumo de Custos e Preço</h4>
+                    <div class="card summary-card" style="text-align: left; padding: var(--spacing-lg);"> <h4>Resumo de Custos e Preço</h4>
                         <p><strong>Custo Unitário Total:</strong> <span id="custoUnitarioTotal">R$ 0,00</span></p>
-                        <p><strong>Margem de Lucro:</strong> <span id="margemLucroDisplay">0%</span></p> <p><strong>Preço de Venda Sugerido:</strong> <span id="precoVendaSugerido">R$ 0,00</span></p>
+                        <p><strong>Margem de Lucro:</strong> <span id="margemLucroDisplay">0%</span></p>
+                        <p><strong>Preço de Venda Sugerido:</strong> <span id="precoVendaSugerido">R$ 0,00</span></p>
                         <p><strong>Lucro Estimado por Par:</strong> <span id="lucroEstimadoPorPar">R$ 0,00</span></p>
                     </div>
 
