@@ -1,22 +1,20 @@
 // js/calculadora.js
 
 const Calculadora = (function() {
-    // Calcula o custo de um modelo buscando-o no Storage
     function calculateModelCost(modelId) {
         const modelo = Storage.getById('modelos', modelId);
         if (!modelo) {
             console.error('Modelo não encontrado para cálculo:', modelId);
             return null;
         }
-        return calculateModelCostFromObject(modelo); // Chama a função que aceita o objeto diretamente
+        return calculateModelCostFromObject(modelo);
     }
 
-    // Calcula o custo de um modelo a partir de um objeto de modelo fornecido
     function calculateModelCostFromObject(modeloObj) {
         const insumos = Storage.load('insumos');
         const custosFixos = Storage.load('custosFixos');
         const custosVariaveis = Storage.load('custosVariaveis');
-        const producoes = Storage.load('producoes'); // Para calcular a quantidade produzida para rateio
+        const producoes = Storage.load('producoes');
 
         let custoInsumos = 0;
         modeloObj.insumosComposicao.forEach(comp => {
@@ -26,7 +24,6 @@ const Calculadora = (function() {
             }
         });
 
-        // Calcular custos fixos rateados
         const totalProducaoMensal = producoes.reduce((acc, prod) => acc + prod.modelosProduzidos.reduce((sum, item) => sum + parseFloat(item.quantidade), 0), 0);
         let custoFixoRateadoPorUnidade = 0;
         if (totalProducaoMensal > 0) {
@@ -34,7 +31,6 @@ const Calculadora = (function() {
             custoFixoRateadoPorUnidade = totalCustosFixos / totalProducaoMensal;
         }
 
-        // Calcular custos variáveis por unidade
         const totalCustosVariaveisPorUnidade = custosVariaveis.reduce((acc, custo) => acc + parseFloat(custo.valor), 0);
 
         const custoTotalUnitario = custoInsumos + custoFixoRateadoPorUnidade + totalCustosVariaveisPorUnidade;
@@ -52,7 +48,6 @@ const Calculadora = (function() {
             return { precoVendaSugerido: 0, lucroEstimado: 0 };
         }
         const margemDecimal = margemLucroPercentual / 100;
-        // Evita divisão por zero ou negativo se a margem for 100% ou mais
         if (1 - margemDecimal <= 0) return { precoVendaSugerido: Infinity, lucroEstimado: Infinity };
         const precoVendaSugerido = custoTotalUnitario / (1 - margemDecimal);
         const lucroEstimado = precoVendaSugerido - custoTotalUnitario;
@@ -71,12 +66,12 @@ const Calculadora = (function() {
 
         let custoTotalProducao = 0;
         let lucroTotalProducao = 0;
-        let insumosConsumidos = {}; // { insumoId: quantidadeConsumida }
+        let insumosConsumidos = {};
 
         producao.modelosProduzidos.forEach(prodItem => {
-            const modelo = Storage.getById('modelos', prodItem.modeloId); // Busca o modelo real
+            const modelo = Storage.getById('modelos', prodItem.modeloId);
             if (modelo) {
-                const modeloCalculo = calculateModelCostFromObject(modelo); // Usa a função adaptada
+                const modeloCalculo = calculateModelCostFromObject(modelo);
                 if (modeloCalculo) {
                     const precoVendaSugerido = suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
                     custoTotalProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
@@ -100,7 +95,7 @@ const Calculadora = (function() {
 
     return {
         calculateModelCost,
-        calculateModelCostFromObject, // Exponha a nova função para uso direto
+        calculateModelCostFromObject,
         suggestSellingPrice,
         calculateProductionSummary
     };
