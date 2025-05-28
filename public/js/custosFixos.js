@@ -32,7 +32,6 @@ function loadCustosFixos() {
     custosFixos.forEach(custo => {
         totalMensal += parseFloat(custo.valorMensal);
         const row = document.createElement('tr');
-        // Adicionando data-label para responsividade da tabela em mobile
         row.innerHTML = `
             <td data-label="Nome do Custo">${custo.nome}</td>
             <td data-label="Valor Mensal (R$)">${parseFloat(custo.valorMensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
@@ -116,7 +115,6 @@ function clearCustoFixoForm() {
     document.getElementById('custoFixoId').value = '';
 }
 
-// Funções globais de modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'flex';
