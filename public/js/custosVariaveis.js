@@ -6,10 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('custoVariavelForm').addEventListener('submit', handleCustoVariavelSubmit);
         document.getElementById('custoVariavelModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('custoVariavelModal');
+                closeModal('custoVariavelModal', clearCustoVariavelForm);
             }
         });
-        document.getElementById('openAddCustoVariavelModal').addEventListener('click', () => openModal('custoVariavelModal'));
+        document.getElementById('openAddCustoVariavelModal').addEventListener('click', () => {
+            clearCustoVariavelForm();
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Variável';
+            openModal('custoVariavelModal');
+        });
     }
 });
 
@@ -19,7 +23,7 @@ function loadCustosVariaveis() {
     custosVariaveisList.innerHTML = '';
 
     if (custosVariaveis.length === 0) {
-        custosVariaveisList.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum custo variável cadastrado.</td></tr>';
+        custosVariaveisList.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum custo variável cadastrado.</td></tr>'; // Alterado colspan para 3
         return;
     }
 
@@ -78,8 +82,7 @@ function handleCustoVariavelSubmit(event) {
 
     if (success) {
         alert(`Custo Variável ${custoVariavelId ? 'atualizado' : 'cadastrado'} com sucesso!`);
-        closeModal('custoVariavelModal');
-        clearCustoVariavelForm();
+        closeModal('custoVariavelModal', clearCustoVariavelForm);
         loadCustosVariaveis();
     } else {
         alert('Falha ao salvar o custo variável.');
@@ -111,14 +114,26 @@ function deleteCustoVariavel(id) {
 function clearCustoVariavelForm() {
     document.getElementById('custoVariavelForm').reset();
     document.getElementById('custoVariavelId').value = '';
-    document.getElementById('modalTitle').textContent = 'Adicionar Novo Custo Variável';
+    // O título do modal será atualizado ao abrir o modal
 }
 
+// Reuso das funções de modal
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10);
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    clearCustoVariavelForm();
+function closeModal(modalId, callback = null) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', function handler() {
+        modal.style.display = 'none';
+        if (callback) {
+            callback();
+        }
+        modal.removeEventListener('transitionend', handler);
+    }, { once: true });
 }
