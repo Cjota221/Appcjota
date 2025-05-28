@@ -1,15 +1,16 @@
 .data-table {
     width: 100%;
-    border-collapse: separate; /* Permite border-spacing */
-    border-spacing: 0 8px; /* Espaçamento entre linhas */
-    margin-top: var(--spacing-md);
-    overflow-x: auto; /* Para rolagem horizontal em mobile */
-    display: block; /* Essencial para overflow-x */
-    white-space: nowrap; /* Evita quebra de linha dentro das células */
+    border-collapse: separate;
+    border-spacing: 0 var(--spacing-sm); /* Espaçamento entre linhas */
+    margin-top: var(--spacing-lg);
+    overflow-x: auto;
+    display: block; /* Para permitir overflow-x */
+    white-space: nowrap; /* Evita quebra de linha nas células */
+    -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
 }
 
 .data-table thead, .data-table tbody {
-    display: table; /* Reverter para display de tabela */
+    display: table;
     width: 100%;
     table-layout: fixed; /* Colunas de largura igual */
 }
@@ -17,39 +18,48 @@
 
 .data-table th,
 .data-table td {
-    padding: var(--spacing-md) var(--spacing-lg); /* Mais padding */
-    border: none; /* Remover bordas padrão */
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
     text-align: left;
-    background-color: var(--surface-dark); /* Cor de fundo */
+    background-color: var(--surface-dark); /* Cor de fundo padrão */
     color: var(--text-light);
+    vertical-align: middle;
 }
 
 .data-table th {
-    background-color: var(--primary-color);
-    color: var(--background-dark); /* Texto escuro no fundo primário */
+    background-color: var(--surface-light); /* Fundo mais claro para o cabeçalho */
+    color: var(--text-light); /* Texto claro no header */
     font-weight: 700;
     text-transform: uppercase;
     font-size: var(--font-size-small);
-    position: sticky; /* Sticky header para rolagem */
+    position: sticky;
     top: 0;
     z-index: 1;
+    border-bottom: 1px solid var(--border-color); /* Borda sutil abaixo do header */
 }
 
 .data-table tbody tr {
     background-color: var(--surface-dark);
-    border-radius: var(--border-radius-md); /* Arredondar cada linha */
-    box-shadow: var(--shadow-sm); /* Sombra para cada linha */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-light); /* Sombra sutil para cada linha */
+    transition: transform var(--transition-speed) var(--transition-timing),
+                box-shadow var(--transition-speed) var(--transition-timing),
+                background-color var(--transition-speed) var(--transition-timing);
 }
 
 .data-table tbody tr:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+    background-color: var(--surface-light); /* Fundo ligeiramente mais claro no hover */
 }
 
 .data-table tbody tr:nth-child(even) {
-    background-color: #222; /* Um tom ligeiramente diferente para linhas pares */
+    background-color: #262645; /* Um tom ligeiramente diferente para linhas pares */
 }
+.data-table tbody tr:nth-child(even):hover {
+     background-color: var(--surface-light); /* Manter o mesmo hover */
+}
+
 
 .data-table .actions {
     display: flex;
@@ -76,7 +86,57 @@
     padding-bottom: var(--spacing-md);
     font-weight: 700;
     color: var(--primary-color);
-    border-top: 1px solid var(--border-color); /* Separador para o rodapé */
-    background-color: var(--surface-dark); /* Mesma cor dos cards */
+    border-top: 1px solid var(--border-color);
+    background-color: var(--surface-dark);
     border-radius: var(--border-radius-md);
+}
+
+/* Responsividade para tabelas */
+@media (max-width: 768px) {
+    .data-table {
+        margin-left: 0; /* Remove margem desnecessária */
+        margin-right: 0;
+        width: calc(100% - var(--spacing-md) * 2); /* Ajusta largura para caber padding */
+    }
+
+    .data-table thead {
+        /* Esconder cabeçalho da tabela em mobile, se necessário para reformatar */
+        /* display: none; */
+    }
+
+    .data-table tbody tr {
+        margin-bottom: var(--spacing-md); /* Mais espaço entre as "linhas-cards" */
+        display: block; /* Cada linha como um bloco separado */
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-light);
+        border-radius: var(--border-radius-lg);
+    }
+
+    .data-table tbody td {
+        display: block; /* Cada célula como um bloco */
+        text-align: right;
+        padding-left: 50%; /* Espaço para o pseudo-elemento da label */
+        position: relative;
+        border-bottom: 1px dotted var(--border-color); /* Separador sutil entre células */
+    }
+
+    .data-table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .data-table tbody td::before {
+        content: attr(data-label); /* Usa o atributo data-label para mostrar o cabeçalho */
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: var(--spacing-md);
+        font-weight: 600;
+        color: var(--text-muted);
+        text-align: left;
+    }
+
+    .data-table .actions {
+        justify-content: flex-end; /* Alinhar botões à direita no mobile */
+        padding-top: var(--spacing-md);
+    }
 }
