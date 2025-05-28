@@ -30,7 +30,6 @@ function renderCustoPorModeloChart() {
             datasets: [{
                 label: 'Custo Total Unitário (R$)',
                 data: data,
-                // Usando getComputedStyle para ler as variáveis CSS diretamente
                 backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
                 borderColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                 borderWidth: 1
@@ -103,14 +102,13 @@ function renderConsumoInsumosChart() {
             datasets: [{
                 label: 'Consumo Total de Insumos',
                 data: data,
-                // Usando getComputedStyle para ler as variáveis CSS diretamente
                 backgroundColor: [
                     getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
                     getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
-                    'rgba(255, 206, 86, 0.6)', // Amarelo
-                    'rgba(75, 192, 192, 0.6)', // Verde-água
-                    'rgba(153, 102, 255, 0.6)', // Roxo
-                    'rgba(255, 159, 64, 0.6)'  // Laranja
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
                 ],
                 borderColor: [
                     getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
@@ -148,4 +146,3 @@ function handleImportData(event) {
         reader.readAsText(file);
     }
 }
-```
