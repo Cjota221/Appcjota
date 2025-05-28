@@ -48,7 +48,7 @@ function loadDashboardSummary() {
     producoes.forEach(prod => {
         const summary = Calculadora.calculateProductionSummary(prod.id);
         if (summary) {
-            totalParesProduzidos += prod.modelosProduzidos.reduce((acc, item) => acc + item.quantidade, 0);
+            prod.modelosProduzidos.forEach(item => totalParesProduzidos += item.quantidade);
             totalLucroEstimado += summary.lucroTotalProducao;
         }
     });
@@ -85,8 +85,8 @@ function renderProducaoChart() {
             datasets: [{
                 label: 'Pares Produzidos',
                 data: data,
-                backgroundColor: var('primary-color'), // Usar a variável CSS
-                borderColor: var('secondary-color'),
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
                 borderWidth: 1
             }]
         },
@@ -121,9 +121,4 @@ function renderProducaoChart() {
             }
         }
     });
-
-    // Função auxiliar para obter valor de variável CSS
-    function var(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
 }
