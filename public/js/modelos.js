@@ -7,24 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modeloForm').addEventListener('submit', handleModeloSubmit);
         document.getElementById('modeloModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('close-button') || e.target.classList.contains('modal')) {
-                closeModal('modeloModal');
+                closeModal('modeloModal', clearModeloForm);
             }
         });
-        document.getElementById('openAddModeloModal').addEventListener('click', () => openModal('modeloModal'));
+        document.getElementById('openAddModeloModal').addEventListener('click', () => {
+            clearModeloForm(); // Garante que o formulário está limpo antes de abrir
+            document.getElementById('modalTitle').textContent = 'Cadastrar Novo Modelo';
+            openModal('modeloModal');
+        });
 
         document.getElementById('modeloImagem').addEventListener('change', handleImageUpload);
         document.getElementById('addInsumoToModelo').addEventListener('click', addInsumoToModeloComposition);
         document.getElementById('modeloInsumosComposicao').addEventListener('click', (e) => {
             if (e.target.classList.contains('remove-insumo')) {
                 e.target.closest('.insumo-item').remove();
-                updateModeloCosts();
+                updateModeloCosts(); // Recalcula os custos ao remover
             }
         });
 
         // Event listeners para recalcular ao mudar inputs de custo/margem
         document.getElementById('margemLucro').addEventListener('input', updateModeloCosts);
-        // Os campos de insumo serão atualizados ao adicionar/remover
-
+        document.getElementById('modeloNome').addEventListener('input', updateModeloCosts); // Também recalcular se o nome mudar, caso afete algo futuro
+        // Outros campos relevantes para o cálculo podem ser adicionados aqui
     }
 });
 
@@ -39,7 +43,7 @@ function loadModelos() {
     }
 
     modelos.forEach(modelo => {
-        const calculo = Calculadora.calculateModelCost(modelo.id);
+        const calculo = Calculadora.calculateModelCostFromObject(modelo); // Usar a função que aceita o objeto
         const { precoVendaSugerido, lucroEstimado } = Calculadora.suggestSellingPrice(calculo ? calculo.custoTotalUnitario : 0, modelo.margemLucro);
 
         const card = document.createElement('div');
@@ -90,12 +94,14 @@ function handleImageUpload(event) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const preview = document.getElementById('imagePreview');
+            // Remove o texto e ícone existentes para exibir a imagem
             preview.innerHTML = `<img src="${e.target.result}" alt="Pré-visualização da imagem">`;
             document.getElementById('modeloImagemBase64').value = e.target.result; // Armazena em base64
         };
         reader.readAsDataURL(file);
     } else {
-        document.getElementById('imagePreview').innerHTML = '<span>Pré-visualização da Imagem</span>';
+        // Volta ao estado inicial se nenhum arquivo for selecionado
+        document.getElementById('imagePreview').innerHTML = '<span>Clique ou arraste para adicionar imagem</span>';
         document.getElementById('modeloImagemBase64').value = '';
     }
 }
@@ -106,6 +112,7 @@ function addInsumoToModeloComposition() {
 
     const insumoId = insumoSelect.value;
     const insumoText = insumoSelect.options[insumoSelect.selectedIndex].text;
+    const insumoUnitCost = Storage.getById('insumos', insumoId).custoUnidade; // Pega o custo unitário do insumo
 
     if (!insumoId || !quantidadeInsumo || parseFloat(quantidadeInsumo) <= 0) {
         alert('Selecione um insumo e informe uma quantidade válida.');
@@ -125,7 +132,7 @@ function addInsumoToModeloComposition() {
     listItem.classList.add('insumo-item');
     listItem.dataset.id = insumoId;
     listItem.innerHTML = `
-        <span>${insumoText.split('(')[0].trim()} - Qtd: ${quantidadeInsumo}</span>
+        <span>${insumoText.split('(')[0].trim()} - Qtd: ${quantidadeInsumo} - Custo: ${(parseFloat(quantidadeInsumo) * parseFloat(insumoUnitCost)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
         <input type="hidden" name="insumoId" value="${insumoId}">
         <input type="hidden" name="quantidade" value="${quantidadeInsumo}">
         <button type="button" class="btn btn-danger btn-sm remove-insumo">Remover</button>
@@ -140,36 +147,24 @@ function addInsumoToModeloComposition() {
 }
 
 function updateModeloCosts() {
-    const modeloId = document.getElementById('modeloId').value;
+    // Coleta os dados do formulário atual para criar um objeto modelo temporário
     const modeloNome = document.getElementById('modeloNome').value;
     const margemLucro = parseFloat(document.getElementById('margemLucro').value) || 0;
 
     const insumosComposicao = [];
     document.querySelectorAll('#modeloInsumosComposicao .insumo-item').forEach(item => {
         insumosComposicao.push({
-            insumoId: item.dataset.id,
+            insumoId: item.querySelector('input[name="insumoId"]').value,
             quantidade: parseFloat(item.querySelector('input[name="quantidade"]').value)
         });
     });
 
-    // Simula o objeto modelo para cálculo temporário
     const tempModelo = {
-        id: modeloId || 'temp', // Usa um ID temporário para cálculo
+        id: 'temp_calculation_id', // ID temporário apenas para o cálculo
         nome: modeloNome,
         insumosComposicao: insumosComposicao,
         margemLucro: margemLucro
     };
-
-    // Salva o modelo temporariamente para que o calculador possa acessá-lo
-    // Isso é uma simplificação. Em um cenário real, você passaria os dados diretamente para a função de cálculo.
-    // Para fins de demonstração, vamos simular como se o modelo estivesse salvo.
-    // Uma alternativa seria modificar `calculateModelCost` para aceitar um objeto de modelo diretamente, sem depender do Storage.
-    // Para o MVP, vamos salvá-lo e imediatamente buscar.
-
-    // Isso é um hack: para que Calculadora.calculateModelCost possa encontrar o modelo,
-    // ele precisa estar no storage. Para evitar salvar modelos incompletos,
-    // vamos passar os dados brutos para o cálculo, se possível.
-    // Vamos ajustar `Calculadora.calculateModelCost` para aceitar um objeto de modelo.
 
     const calculo = Calculadora.calculateModelCostFromObject(tempModelo);
     if (calculo) {
@@ -178,120 +173,15 @@ function updateModeloCosts() {
         document.getElementById('custoUnitarioTotal').textContent = calculo.custoTotalUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         document.getElementById('precoVendaSugerido').textContent = precoVendaSugerido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         document.getElementById('lucroEstimadoPorPar').textContent = lucroEstimado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        document.getElementById('margemLucroDisplay').textContent = `${margemLucro}%`; // Atualiza o display da margem
     } else {
         document.getElementById('custoUnitarioTotal').textContent = 'R$ 0,00';
         document.getElementById('precoVendaSugerido').textContent = 'R$ 0,00';
         document.getElementById('lucroEstimadoPorPar').textContent = 'R$ 0,00';
+        document.getElementById('margemLucroDisplay').textContent = '0%';
     }
 }
 
-// Adaptação de Calculadora.calculateModelCost para aceitar um objeto de modelo
-// (Isso seria feito no js/calculadora.js)
-// Para o propósito deste rascunho, vamos simular que esta função existe
-// Temporariamente, vou colocar a versão adaptada aqui para ilustração
-
-const Calculadora = (function() {
-    function calculateModelCost(modelId) {
-        const modelo = Storage.getById('modelos', modelId);
-        if (!modelo) {
-            console.error('Modelo não encontrado para cálculo:', modelId);
-            return null;
-        }
-        return calculateModelCostFromObject(modelo);
-    }
-
-    function calculateModelCostFromObject(modeloObj) {
-        const insumos = Storage.load('insumos');
-        const custosFixos = Storage.load('custosFixos');
-        const custosVariaveis = Storage.load('custosVariaveis');
-        const producoes = Storage.load('producoes');
-
-        let custoInsumos = 0;
-        modeloObj.insumosComposicao.forEach(comp => {
-            const insumo = insumos.find(i => i.id === comp.insumoId);
-            if (insumo) {
-                custoInsumos += parseFloat(insumo.custoUnidade) * parseFloat(comp.quantidade);
-            }
-        });
-
-        const totalProducaoMensal = producoes.reduce((acc, prod) => acc + parseFloat(prod.quantidade), 0);
-        let custoFixoRateadoPorUnidade = 0;
-        if (totalProducaoMensal > 0) {
-            const totalCustosFixos = custosFixos.reduce((acc, custo) => acc + parseFloat(custo.valorMensal), 0);
-            custoFixoRateadoPorUnidade = totalCustosFixos / totalProducaoMensal;
-        }
-
-        const totalCustosVariaveisPorUnidade = custosVariaveis.reduce((acc, custo) => acc + parseFloat(custo.valor), 0);
-
-        const custoTotalUnitario = custoInsumos + custoFixoRateadoPorUnidade + totalCustosVariaveisPorUnidade;
-
-        return {
-            custoInsumos: custoInsumos,
-            custoFixoRateado: custoFixoRateadoPorUnidade,
-            custoVariavel: totalCustosVariaveisPorUnidade,
-            custoTotalUnitario: custoTotalUnitario
-        };
-    }
-
-    function suggestSellingPrice(custoTotalUnitario, margemLucroPercentual) {
-        if (margemLucroPercentual < 0) {
-            return { precoVendaSugerido: 0, lucroEstimado: 0 };
-        }
-        const margemDecimal = margemLucroPercentual / 100;
-        // Evita divisão por zero ou negativo se a margem for 100% ou mais
-        if (1 - margemDecimal <= 0) return { precoVendaSugerido: Infinity, lucroEstimado: Infinity };
-        const precoVendaSugerido = custoTotalUnitario / (1 - margemDecimal);
-        const lucroEstimado = precoVendaSugerido - custoTotalUnitario;
-
-        return {
-            precoVendaSugerido: precoVendaSugerido,
-            lucroEstimado: lucroEstimado
-        };
-    }
-
-    function calculateProductionSummary(producaoId) {
-        const producao = Storage.getById('producoes', producaoId);
-        if (!producao) {
-            return null;
-        }
-
-        let custoTotalProducao = 0;
-        let lucroTotalProducao = 0;
-        let insumosConsumidos = {}; // { insumoId: quantidadeConsumida }
-
-        producao.modelosProduzidos.forEach(prodItem => {
-            const modelo = Storage.getById('modelos', prodItem.modeloId);
-            if (modelo) {
-                const modeloCalculo = calculateModelCostFromObject(modelo); // Use a função adaptada
-                if (modeloCalculo) {
-                    const precoVendaSugerido = suggestSellingPrice(modeloCalculo.custoTotalUnitario, prodItem.margemLucro);
-                    custoTotalProducao += modeloCalculo.custoTotalUnitario * prodItem.quantidade;
-                    lucroTotalProducao += precoVendaSugerido.lucroEstimado * prodItem.quantidade;
-
-                    modelo.insumosComposicao.forEach(comp => {
-                        const insumoId = comp.insumoId;
-                        const quantidadeConsumida = parseFloat(comp.quantidade) * prodItem.quantidade;
-                        insumosConsumidos[insumoId] = (insumosConsumidos[insumoId] || 0) + quantidadeConsumida;
-                    });
-                }
-            }
-        });
-
-        return {
-            custoTotalProducao: custoTotalProducao,
-            lucroTotalProducao: lucroTotalProducao,
-            insumosConsumidos: insumosConsumidos
-        };
-    }
-
-    return {
-        calculateModelCost,
-        calculateModelCostFromObject, // Exponha a função adaptada
-        suggestSellingPrice,
-        calculateProductionSummary
-    };
-})();
-// Fim da adaptação temporária
 
 function handleModeloSubmit(event) {
     event.preventDefault();
@@ -331,8 +221,7 @@ function handleModeloSubmit(event) {
 
     if (success) {
         alert(`Modelo ${modeloId ? 'atualizado' : 'cadastrado'} com sucesso!`);
-        closeModal('modeloModal');
-        clearModeloForm();
+        closeModal('modeloModal', clearModeloForm); // Passa a função de limpar como callback
         loadModelos();
     } else {
         alert('Falha ao salvar o modelo.');
@@ -352,7 +241,8 @@ function editModelo(id) {
             preview.innerHTML = `<img src="${modelo.imagem}" alt="Pré-visualização da imagem">`;
             document.getElementById('modeloImagemBase64').value = modelo.imagem;
         } else {
-            preview.innerHTML = '<span>Pré-visualização da Imagem</span>';
+            // Se não houver imagem, volta ao estado inicial com o ícone e texto
+            preview.innerHTML = '<span>Clique ou arraste para adicionar imagem</span>';
             document.getElementById('modeloImagemBase64').value = '';
         }
 
@@ -366,7 +256,7 @@ function editModelo(id) {
                 listItem.classList.add('insumo-item');
                 listItem.dataset.id = comp.insumoId;
                 listItem.innerHTML = `
-                    <span>${insumo.nome} - Qtd: ${comp.quantidade}</span>
+                    <span>${insumo.nome} - Qtd: ${comp.quantidade} - Custo: ${(parseFloat(comp.quantidade) * parseFloat(insumo.custoUnidade)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                     <input type="hidden" name="insumoId" value="${comp.insumoId}">
                     <input type="hidden" name="quantidade" value="${comp.quantidade}">
                     <button type="button" class="btn btn-danger btn-sm remove-insumo">Remover</button>
@@ -395,20 +285,33 @@ function deleteModelo(id) {
 function clearModeloForm() {
     document.getElementById('modeloForm').reset();
     document.getElementById('modeloId').value = '';
-    document.getElementById('imagePreview').innerHTML = '<span>Pré-visualização da Imagem</span>';
+    document.getElementById('imagePreview').innerHTML = '<span>Clique ou arraste para adicionar imagem</span>'; // Volta ao texto padrão
     document.getElementById('modeloImagemBase64').value = '';
     document.getElementById('modeloInsumosComposicao').innerHTML = '';
     document.getElementById('custoUnitarioTotal').textContent = 'R$ 0,00';
     document.getElementById('precoVendaSugerido').textContent = 'R$ 0,00';
     document.getElementById('lucroEstimadoPorPar').textContent = 'R$ 0,00';
-    document.getElementById('modalTitle').textContent = 'Adicionar Novo Modelo';
+    document.getElementById('margemLucroDisplay').textContent = '0%'; // Limpa o display da margem
+    // O título do modal será atualizado ao abrir o modal
 }
 
+// Funções globais de modal (ou mova para app.js se for usar em várias páginas)
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'flex'; // Exibe o modal para iniciar a transição
+    setTimeout(() => {
+        modal.classList.add('open');
+    }, 10); // Pequeno atraso para permitir que o display:flex seja aplicado antes da transição
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    clearModeloForm();
+function closeModal(modalId, callback = null) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', function handler() {
+        modal.style.display = 'none'; // Esconde o modal após a transição
+        if (callback) {
+            callback(); // Executa a função de limpeza (clearForm)
+        }
+        modal.removeEventListener('transitionend', handler);
+    }, { once: true }); // Remove o listener após a primeira execução
 }
