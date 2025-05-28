@@ -1,1 +1,150 @@
+/* Header */
+.app-header {
+  background-color: var(--header-bg-color);
+  color: var(--primary-color);
+  padding: 0 var(--spacing-lg);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
 
+.app-header .header-title h1 {
+  margin-bottom: 0;
+  font-size: var(--font-size-lg); /* Ajuste o tamanho conforme necessário */
+}
+
+.app-header .logo-header-container {
+    display: none; /* Mostrado apenas em mobile */
+    align-items: center;
+}
+
+.app-header .logo-header-container .logo-img {
+    height: 35px;
+    margin-right: var(--spacing-sm);
+}
+.app-header .logo-header-container .logo-text {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+
+/* Sidebar */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg-color);
+  color: var(--sidebar-text-color);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  z-index: 1001;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  transition: left 0.3s ease-in-out;
+  padding-bottom: var(--spacing-xl); /* Espaço para não cortar o último item */
+}
+
+.app-sidebar .sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    height: var(--header-height); /* Mesma altura do header */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.app-sidebar .sidebar-header .logo-img {
+    height: 40px;
+    margin-right: var(--spacing-sm);
+}
+.app-sidebar .sidebar-header .logo-text {
+    font-size: var(--font-size-xl);
+    font-weight: bold;
+    color: var(--white-color); /* Texto do logo no sidebar */
+}
+
+
+.app-sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--spacing-md);
+}
+
+.app-sidebar nav ul li a {
+  display: block;
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--sidebar-text-color);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.app-sidebar nav ul li a:hover {
+  background-color: var(--sidebar-link-hover-bg);
+  color: var(--white-color);
+  padding-left: calc(var(--spacing-lg) + 5px);
+}
+
+.app-sidebar nav ul li a.active {
+  background-color: var(--sidebar-link-active-bg);
+  color: var(--white-color);
+  font-weight: bold;
+  border-left-color: var(--secondary-color);
+}
+
+/* Menu Toggle Button */
+.menu-toggle {
+  display: none; /* Inicialmente escondido, mostrado via JS em mobile */
+  position: fixed;
+  top: calc((var(--header-height) - 40px) / 2); /* Centraliza no header */
+  left: var(--spacing-md);
+  z-index: 1002;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .app-sidebar {
+    left: calc(-1 * var(--sidebar-width)); /* Escondido fora da tela */
+  }
+
+  .app-sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .app-header {
+    left: 0;
+    width: 100%;
+  }
+  .app-header .header-title {
+      display: none; /* Esconde título principal no header em mobile */
+  }
+   .app-header .logo-header-container {
+      display: flex; /* Mostra logo no header em mobile */
+  }
+
+
+  .menu-toggle {
+    display: block; /* Mostra o botão de toggle */
+  }
+}
